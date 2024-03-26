@@ -2,10 +2,10 @@ import React from 'react';
 import { StyleSheet, Text, View, ImageBackground, TouchableOpacity } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import LoginPage from './LoginPage';
-import RegisterPage from './RegisterPage';
-import UpdateUserPage from './UpdateUserPage';
-import UserDetailsPage from './UserDetailsPage';
+import LoginPage from './Pages/LoginPage';
+import RegisterPage from './Pages/RegisterPage';
+import UserDetailsPage from './Pages/UserDetailsPage';
+import Oferta from './Pages/Oferta';
 import { useNavigation } from '@react-navigation/native';
 
 const Stack = createNativeStackNavigator();
@@ -26,11 +26,11 @@ function HomeScreen() {
         <TouchableOpacity onPress={() => navigation.navigate('Register')} style={styles.button}>
           <Text style={styles.buttonText}>Rejestracja</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('UpdateUserPage')} style={styles.button}>
-          <Text style={styles.buttonText}>Zaktualizuj dane</Text>
-        </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate('UserDetailsPage')} style={styles.button}>
           <Text style={styles.buttonText}>Dane użytkownika</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Oferta')} style={styles.button}>
+          <Text style={styles.buttonText}>Oferta</Text>
         </TouchableOpacity>
       </ImageBackground>
     </View>
@@ -44,9 +44,8 @@ export default function App() {
         <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={LoginPage} options={{ headerShown: false }} />
         <Stack.Screen name="Register" component={RegisterPage} options={{ headerShown: false }} />
-        <Stack.Screen name="UpdateUser" component={UpdateUserPage} options={{ headerShown: false }} />
         <Stack.Screen name="UserDetails" component={UserDetailsPage} options={{ headerShown: false }} />
-        
+        <Stack.Screen name="Oferta" component={Oferta} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

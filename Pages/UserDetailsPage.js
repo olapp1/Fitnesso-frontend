@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   TextInput,
@@ -6,22 +6,49 @@ import {
   StyleSheet,
   ImageBackground,
   TouchableOpacity,
-  Alert,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native'; // Dodany import
+
+// Dodany import GetRequests
+import { GetRequests } from '../communication/network/GetRequest'; 
 
 
-const UserDetailsPage = ({ navigation }) => {
-  const [userData, setUserData] = useState({
-    firstName: 'Ola',
-    lastName: 'Kowalska',
-    email: 'ola@wp.pl',
-    login: 'ola2023',
-    phone: '123-456-789',
-  });
+const UserDetailsPage = () => {
+  const navigation = useNavigation(); // Dodany hook useNavigation
+  const [userData, setUserData] = useState(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = localStorage.getItem('Token');
+        const userId = localStorage.getItem('UserId');
+
+        if (token && userId) {
+          // Poprawiono wywołanie funkcji getUserById
+          const response = await GetRequests.getUserDetails(Number(userId), token);
+
+          if (!response.ok) {
+            throw new Error('Nie udało się pobrać danych użytkownika');
+          }
+
+          const data = await response.json();
+          setUserData(data);
+        }
+      } catch (error) {
+        console.error('Błąd pobierania danych użytkownika:', error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   const handleUpdate = (key, value) => {
     setUserData((prev) => ({ ...prev, [key]: value }));
   };
+
+  if (!userData) {
+    return null; // Możesz wyświetlić jakąś informację ładowania
+  }
 
   return (
     <ImageBackground
@@ -41,46 +68,21 @@ const UserDetailsPage = ({ navigation }) => {
           onPress={() => navigation.navigate('Oferta')} 
         >
           <Text style={styles.navButtonText}>Oferta</Text>
-          
         </TouchableOpacity>
       </View>
 
       <Text style={styles.title}>Szczegóły użytkownika</Text>
-      <View style={styles.tile}>
-        <TextInput 
-          style={styles.detailText} 
-          value={userData.firstName} 
-          onChangeText={(text) => handleUpdate('firstName', text)} 
-        />
-      </View>
-      <View style={styles.tile}>
-        <TextInput 
-          style={styles.detailText} 
-          value={userData.lastName} 
-          onChangeText={(text) => handleUpdate('lastName', text)} 
-        />
-      </View>
-      <View style={styles.tile}>
-        <TextInput 
-          style={styles.detailText} 
-          value={userData.email} 
-          onChangeText={(text) => handleUpdate('email', text)} 
-        />
-      </View>
-      <View style={styles.tile}>
-        <TextInput 
-          style={styles.detailText} 
-          value={userData.login} 
-          onChangeText={(text) => handleUpdate('login', text)} 
-        />
-      </View>
-      <View style={styles.tile}>
-        <TextInput 
-          style={styles.detailText} 
-          value={userData.phone} 
-          onChangeText={(text) => handleUpdate('phone', text)} 
-        />
-      </View>
+      
+      {Object.entries(userData).map(([key, value]) => (
+        <View style={styles.tile} key={key}>
+          <Text style={styles.detailLabel}>{key}</Text>
+          <TextInput 
+            style={styles.detailText} 
+            value={value.toString()} 
+            onChangeText={(text) => handleUpdate(key, text)} 
+          />
+        </View>
+      ))}
     </ImageBackground>
   );
 };
@@ -120,6 +122,11 @@ const styles = StyleSheet.create({
     padding: 10,
     marginVertical: 5,
     borderRadius: 5,
+  },
+  detailLabel: {
+    fontSize: 20,
+    color: '#FFF',
+    fontWeight: 'bold',
   },
   detailText: {
     fontSize: 20,

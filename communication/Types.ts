@@ -1,12 +1,12 @@
 export interface User {
-    id: number;
+    id: number,
     firstName: string;
     lastName: string;
-    login: string;
+    login: string,
     email: string;
     password: string;
     phone: string;
-    accountTypeId: number;
+    accountTypeId: number
 }
 
 export interface Product {

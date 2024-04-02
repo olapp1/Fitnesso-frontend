@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { View, TextInput, Button, Alert, Text, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { PostRequests } from '../communication/network/PostRequests';
-import AsyncStorage from '@react-native-async-storage/async-storage'; 
+import { GetRequests } from '../communication/network/GetRequests';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LoginPage = () => {
   const navigation = useNavigation();
@@ -15,40 +16,48 @@ const LoginPage = () => {
       const result = await PostRequests.logInUser(email, password);
       if (result.token) { // Sprawdź czy result zawiera token
         await AsyncStorage.setItem('Token', result.token); // Zapisz token w AsyncStorage
-        console.log(result.token); //wyswietla toke w consoli pzregladr 
-        setUser(email); //uzżwała do komunikatu przwitania
+        console.log(result.token);
+
       } else {
-        Alert.alert('Login Failed', 'Invalid email or password.');
+        Alert.alert('Login Failed', 'Invalid email or password. Please try again.');
       }
     } catch (error) {
       console.error('Login Error:', error.message);
-      Alert.alert('Login Error', 'An error occurred during the login process.');
+      Alert.alert('Login Error', 'An error occurred during the login process. Please try again later.');
     }
   };
 
   return (
-    <View style={styles.container}>
-      {user ? (
-        <Text style={styles.welcomeText}>{`Witaj, ${user}!`}</Text>
-      ) : (
-        <>
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            value={email}
-            onChangeText={setEmail}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
-          />
-          <Button title="Log In" onPress={handleLogin} />
-        </>
-      )}
-    </View>
+      <View style={styles.container}>
+        {user ? (
+            <View>
+              <Text style={styles.welcomeText}>{`Witaj, ${user}!`}</Text>
+              <Button title="Pokaż szczegóły użytkownika" onPress={() => navigation.navigate('UserDetails')} />
+            </View>
+        ) : (
+            <>
+              <TextInput
+                  style={styles.input}
+                  placeholder="Email"
+                  value={email}
+                  onChangeText={setEmail}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+              />
+              <TextInput
+                  style={styles.input}
+                  placeholder="Password"
+                  secureTextEntry
+                  value={password}
+                  onChangeText={setPassword}
+              />
+              <Button
+                  title="Log In"
+                  onPress={handleLogin}
+              />
+            </>
+        )}
+      </View>
   );
 };
 
@@ -73,5 +82,4 @@ const styles = StyleSheet.create({
 });
 
 export default LoginPage;
-
 

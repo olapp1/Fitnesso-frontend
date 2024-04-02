@@ -4,7 +4,7 @@ import axios from 'axios';
 
 // Utwórz instancję axios dla autoryzacji
 const apiAuth = axios.create({
-    baseURL: "http://localhost:8080",
+    baseURL: "http://192.168.18.18:8080",
 });
 
 

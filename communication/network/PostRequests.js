@@ -1,27 +1,29 @@
-//PostRequest.js
 import { apiAuth } from './AuthRequest';
 import { Post } from '../Endpoints';
 import { Utils } from './Utils';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 export class PostRequests {
     // USERS
-    static logInUser(email, password) {
-        return apiAuth.post(Post.USER, {
-            email: email,
-            password: password
-        })
-        .then(response => {
-            if (response.ok) {
-                // Jeśli odpowiedź jest prawidłowa, przechwyć token
+    static async logInUser(email, password) {
+        try {
+            const response = await apiAuth.post(Post.USER, {
+                email: email,
+                password: password
+            });
+
+            if (response.status === 200) {
                 const token = response.data.token;
-
-                // Zapisz token w pamięci lokalnej
-                localStorage.setItem('Token', token);
+                await AsyncStorage.setItem('Token', token);
+                return { token: token };
+            } else {
+                throw new Error('Invalid response');
             }
-
-            return Utils.mapResponse(response);
-        })
-        .catch(Utils.handleError);
+        } catch (error) {
+            console.error('Login Error:', error);
+            throw new Error('An error occurred during login.');
+        }
     }
 
     static registerUser(first_name, last_name, login, email, password, phone) {

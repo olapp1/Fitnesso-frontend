@@ -1,38 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  TextInput,
-  Text,
-  StyleSheet,
-  ImageBackground,
-  TouchableOpacity,
-} from 'react-native';
-import { useNavigation } from '@react-navigation/native'; // Dodany import
-
-// Dodany import GetRequests
-import { GetRequests } from '../communication/network/GetRequest'; 
-
+import { View, Text, StyleSheet, ImageBackground, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { GetRequests } from '../communication/network/GetRequests';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const UserDetailsPage = () => {
-  const navigation = useNavigation(); // Dodany hook useNavigation
+  const navigation = useNavigation();
   const [userData, setUserData] = useState(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const token = localStorage.getItem('Token');
-        const userId = localStorage.getItem('UserId');
-
-        if (token && userId) {
-          // Poprawiono wywołanie funkcji getUserById
-          const response = await GetRequests.getUserDetails(Number(userId), token);
-
-          if (!response.ok) {
-            throw new Error('Nie udało się pobrać danych użytkownika');
+        const token = await AsyncStorage.getItem('Token');
+        if (token) {
+          const userId = await AsyncStorage.getItem('UserId');
+          if (userId) {
+            const response = await GetRequests.getUserDetailsById(userId, token);
+            console.log('Response:', response); // Debugowanie odpowiedzi
+            if (!response.ok) {
+              throw new Error('Nie udało się pobrać danych użytkownika');
+            }
+            const data = await response.json();
+            console.log('User Data:', data); // Debugowanie danych użytkownika
+            setUserData(data);
           }
-
-          const data = await response.json();
-          setUserData(data);
         }
       } catch (error) {
         console.error('Błąd pobierania danych użytkownika:', error);
@@ -42,48 +33,40 @@ const UserDetailsPage = () => {
     fetchUserData();
   }, []);
 
-  const handleUpdate = (key, value) => {
-    setUserData((prev) => ({ ...prev, [key]: value }));
-  };
-
   if (!userData) {
-    return null; // Możesz wyświetlić jakąś informację ładowania
+    return <Text>Ładowanie...</Text>;
   }
 
   return (
-    <ImageBackground
-      source={require('../assets/content-pixie-be-6rpnQ30k-unsplash.jpg')}
-      style={styles.background}
-      resizeMode="cover"
-    >
-      <View style={styles.navContainer}>
-        <TouchableOpacity
-          style={styles.navButton}
-          onPress={() => navigation.navigate('Reservations')} 
-        >
-          <Text style={styles.navButtonText}>Rezerwacje</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.navButton}
-          onPress={() => navigation.navigate('Oferta')} 
-        >
-          <Text style={styles.navButtonText}>Oferta</Text>
-        </TouchableOpacity>
-      </View>
-
-      <Text style={styles.title}>Szczegóły użytkownika</Text>
-      
-      {Object.entries(userData).map(([key, value]) => (
-        <View style={styles.tile} key={key}>
-          <Text style={styles.detailLabel}>{key}</Text>
-          <TextInput 
-            style={styles.detailText} 
-            value={value.toString()} 
-            onChangeText={(text) => handleUpdate(key, text)} 
-          />
+      <ImageBackground
+          source={require('../assets/content-pixie-be-6rpnQ30k-unsplash.jpg')}
+          style={styles.background}
+          resizeMode="cover"
+      >
+        <View style={styles.navContainer}>
+          <TouchableOpacity
+              style={styles.navButton}
+              onPress={() => navigation.navigate('Reservations')}
+          >
+            <Text style={styles.navButtonText}>Rezerwacje</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+              style={styles.navButton}
+              onPress={() => navigation.navigate('Oferta')}
+          >
+            <Text style={styles.navButtonText}>Oferta</Text>
+          </TouchableOpacity>
         </View>
-      ))}
-    </ImageBackground>
+
+        <Text style={styles.title}>Szczegóły użytkownika</Text>
+
+        {Object.entries(userData).map(([key, value]) => (
+            <View style={styles.tile} key={key}>
+              <Text style={styles.detailLabel}>{key}</Text>
+              <Text style={styles.detailText}>{value}</Text>
+            </View>
+        ))}
+      </ImageBackground>
   );
 };
 
@@ -136,3 +119,5 @@ const styles = StyleSheet.create({
 });
 
 export default UserDetailsPage;
+
+

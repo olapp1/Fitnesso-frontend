@@ -27,7 +27,7 @@ const getAuthorizationHeader = async () => {
 
 // Utwórz instancję axios dla API
 const api = axios.create({
-    baseURL: "http://localhost:8080"
+    baseURL: "http://192.168.18.18:8080"
 });
 
 // Przechwyć i dodaj nagłówek autoryzacji do każdego żądania

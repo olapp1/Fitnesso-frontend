@@ -1,9 +1,9 @@
 
-const AsyncStorage = require('@react-native-async-storage/async-storage');
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Funkcja do pobierania tokena z AsyncStorage
-const getToken = async () => {
+export const getToken = async () => {
   try {
     const tokenString = await AsyncStorage.getItem("Token");
     console.log("Token string:", tokenString); // Log the token string
@@ -15,7 +15,7 @@ const getToken = async () => {
 };
 
 // Funkcja do pobierania nagłówka autoryzacji
-const getAuthorizationHeader = async () => {
+export const getAuthorizationHeader = async () => {
   try {
     const token = await getToken();
     return token ? `Bearer ${token}` : null;
@@ -26,7 +26,7 @@ const getAuthorizationHeader = async () => {
 };
 
 // Utwórz instancję axios dla API
-const api = axios.create({
+export const api = axios.create({
   baseURL: "http://192.168.18.18:8080"
 });
 

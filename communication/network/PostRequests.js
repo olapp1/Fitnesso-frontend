@@ -1,21 +1,45 @@
-// PostRequests.js
-export const PostRequests = {
-    logInUser: async (email, password) => {
-      // Simulate an API call
-      try {
-        if (email === 'Ola@wp.pl' && password === 'Ola') {
-          // Simulated successful login
-          return { success: true, token: 'simulated_token' };
-        } else {
-          // Simulated login failure
-          return { success: false };
-        }
-      } catch (error) {
-        console.error('Error logging in:', error);
-        throw error;
+import { apiAuth } from './AuthRequest';
+import { Post } from '../Endpoints';
+import { Utils } from './Utils';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+
+export class PostRequests {
+  // USERS
+  static async logInUser(email, password) {
+    try {
+      const response = await apiAuth.post(Post.USER, {
+        email: email,
+        password: password
+      });
+
+      if (response.status === 200) {
+        const token = response.data.token;
+        await AsyncStorage.setItem('Token', token);
+        return { token: token };
+      } else {
+        throw new Error('Invalid response');
       }
-    },
-  };
-  
-  export default PostRequests;
-  
+    } catch (error) {
+      console.error('Login Error:', error);
+      throw new Error('An error occurred during login.');
+    }
+  }
+
+  static registerUser(first_name, last_name, login, email, password, phone) {
+    return apiAuth.post(Post.USERREG, {
+      firstName: first_name,
+      lastName: last_name,
+      login: login,
+      email: email,
+      password: password,
+      phone: phone
+    }).then(Utils.mapResponse)
+        .catch(Utils.handleError);
+  }
+
+  static logout() {
+    return apiAuth.post(Post.USER_LOGOUT).then(Utils.mapResponse)
+        .catch(Utils.handleError);
+  }
+}

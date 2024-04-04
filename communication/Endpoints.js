@@ -1,5 +1,5 @@
-const API_V1 = "/api/v1";
-const USERS = "/users";
+export const API_V1 = "/api/v1";
+export const USERS = "/users";
 
 export const Get = {
     USERS: API_V1 + USERS,

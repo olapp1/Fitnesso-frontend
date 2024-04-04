@@ -2,6 +2,7 @@ import { Get } from '../Endpoints';
 import { api } from '../Config';
 import { Utils } from './Utils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API_V1 } from '../../communication/Endpoints';
 
 class GetRequests {
     // Metoda pobierająca wszystkich użytkowników
@@ -46,7 +47,25 @@ class GetRequests {
         }
     }
 
-
+    static async getUserIdByEmail(email) {
+        try {
+            const token = await AsyncStorage.getItem('Token');
+            if (token) {
+                const response = await api.get(`/api/v1/users/by-email?email=${email}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                return response.data; // Zwracamy tylko dane
+            } else {
+                console.error('Token is not available');
+                return null;
+            }
+        } catch (error) {
+            console.error('Error getting user ID:', error.message);
+            return null;
+        }
+    }
 }
 
 export default GetRequests;

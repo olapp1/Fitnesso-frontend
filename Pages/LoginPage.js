@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, Button, Alert, Text, StyleSheet } from 'react-native';
+import { View, TextInput, Button, Alert, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PostRequests } from '../communication/network/PostRequests';
@@ -11,22 +11,22 @@ const LoginPage = () => {
   const [password, setPassword] = useState('');
 
   useEffect(() => {
-    checkToken();
-  }, []);
-
-  const checkToken = async () => {
-    try {
-      const token = await AsyncStorage.getItem('userToken');
-      if (token) {
-        console.log('Token found:', token);
-
-      } else {
-        console.log('Token not found');
+    const checkToken = async () => {
+      try {
+        const token = await AsyncStorage.getItem('userToken');
+        if (token) {
+          console.log('Token found:', token);
+          // Możesz tutaj dodać automatyczne przekierowanie, jeśli token jest dostępny
+          // navigation.navigate('UserDetails');
+        } else {
+          console.log('Token not found');
+        }
+      } catch (error) {
+        console.error('Error getting token:', error);
       }
-    } catch (error) {
-      console.error('Error getting token:', error);
-    }
-  };
+    };
+    checkToken();
+  }, [navigation]);
 
   const handleLogin = async () => {
     try {
@@ -41,42 +41,45 @@ const LoginPage = () => {
           console.log('User Type:', userIdResponse[1]); // Druga cyfra jako typ konta
 
           // Zapisz token i ID użytkownika do pamięci
-         await AsyncStorage.setItem('userToken', result.token);
+          await AsyncStorage.setItem('userToken', result.token);
           await AsyncStorage.setItem('userId', userIdResponse[0].toString());
+
+          // Przekieruj do UserDetailsPage
+          navigation.navigate('UserDetails');
         } else {
           console.error('User ID not found');
         }
       } else {
-        Alert.alert('Login Failed', 'Invalid email or password. Please try again.');
+        Alert.alert('Logowanie nieudane', 'Nieprawidłowy e-mail lub hasło. Spróbuj ponownie.');
       }
     } catch (error) {
-      console.error('Login Error:', error.message);
-      Alert.alert('Login Error', 'An error occurred during the login process. Please try again later.');
+      console.error('Błąd logowania:', error.message);
+      Alert.alert('Błąd logowania', 'Wystąpił błąd podczas procesu logowania. Spróbuj ponownie później.');
     }
   };
 
   return (
-      <View style={styles.container}>
-        <TextInput
-            style={styles.input}
-            placeholder="Email"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
-        />
-        <TextInput
-            style={styles.input}
-            placeholder="Password"
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
-        />
-        <Button
-            title="Log In"
-            onPress={handleLogin}
-        />
-      </View>
+    <View style={styles.container}>
+      <TextInput
+        style={styles.input}
+        placeholder="Email"
+        value={email}
+        onChangeText={setEmail}
+        keyboardType="email-address"
+        autoCapitalize="none"
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Hasło"
+        secureTextEntry
+        value={password}
+        onChangeText={setPassword}
+      />
+      <Button
+        title="Zaloguj się"
+        onPress={handleLogin}
+      />
+    </View>
   );
 };
 
@@ -88,9 +91,11 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   input: {
+    width: '100%',
     height: 40,
     marginBottom: 12,
     borderWidth: 1,
+    borderColor: 'gray',
     paddingHorizontal: 10,
   },
 });

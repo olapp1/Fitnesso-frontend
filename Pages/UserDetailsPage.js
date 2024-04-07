@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   TextInput,
@@ -8,16 +8,47 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
 const UserDetailsPage = ({ navigation }) => {
   const [userData, setUserData] = useState({
-    firstName: 'Ola',
-    lastName: 'Kowalska',
-    email: 'ola@wp.pl',
-    login: 'ola2023',
-    phone: '123-456-789',
+    firstName: '',
+    lastName: '',
+    email: '',
+    login: '',
+    phone: '',
   });
+
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      try {
+        const userId = await AsyncStorage.getItem('userId');
+        const token = await AsyncStorage.getItem('userToken');
+        if (userId && token) {
+          const response = await axios.get(`http://localhost:8080/api/v1/users/${userId}/details`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          setUserData({
+            firstName: response.data.firstName,
+            lastName: response.data.lastName,
+            email: response.data.email,
+            login: response.data.login,
+            phone: response.data.phone,
+          });
+        } else {
+          Alert.alert("Błąd", "Nie znaleziono tokenu lub ID użytkownika.");
+        }
+      } catch (error) {
+        console.error('Błąd podczas pobierania szczegółów użytkownika:', error);
+        Alert.alert("Błąd", "Nie można załadować szczegółów użytkownika.");
+      }
+    };
+
+    fetchUserDetails();
+  }, []);
 
   const handleUpdate = (key, value) => {
     setUserData((prev) => ({ ...prev, [key]: value }));
@@ -41,7 +72,6 @@ const UserDetailsPage = ({ navigation }) => {
           onPress={() => navigation.navigate('Oferta')} 
         >
           <Text style={styles.navButtonText}>Oferta</Text>
-          
         </TouchableOpacity>
       </View>
 

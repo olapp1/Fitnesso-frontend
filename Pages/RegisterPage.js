@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet } from 'react-native';
+import { PostRequests } from '../communication/network/PostRequests';
 
 const RegisterPage = ({ navigation }) => {
   const [firstName, setFirstName] = useState('');
@@ -10,8 +11,15 @@ const RegisterPage = ({ navigation }) => {
   const [phone, setPhone] = useState('');
 
   const handleRegister = () => {
-    console.log('Rejestracja z:', firstName, lastName, email, login, password, phone);
-    // Tutaj dodaj logikę wysyłania danych rejestracji do API
+    PostRequests.registerUser(firstName, lastName, login, email, password, phone)
+      .then(response => {
+        Alert.alert("Sukces", "Rejestracja przebiegła pomyślnie.");
+        navigation.navigate('Login');
+      })
+      .catch(error => {
+        Alert.alert("Błąd rejestracji", "Wystąpił problem podczas rejestracji. Spróbuj ponownie.");
+        console.error(error);
+      });
   };
 
   return (
@@ -45,9 +53,9 @@ const RegisterPage = ({ navigation }) => {
       <TextInput
         style={styles.input}
         placeholder="Hasło"
+        secureTextEntry={true}
         value={password}
         onChangeText={setPassword}
-        secureTextEntry
       />
       <TextInput
         style={styles.input}
@@ -55,7 +63,10 @@ const RegisterPage = ({ navigation }) => {
         value={phone}
         onChangeText={setPhone}
       />
-      <Button title="Zarejestruj się" onPress={handleRegister} />
+     
+      <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
+        <Text style={styles.buttonText}>Zarejestruj się</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -65,18 +76,31 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    padding: 20,
   },
   title: {
     fontSize: 24,
     marginBottom: 20,
   },
   input: {
-    width: '80%',
-    padding: 10,
-    marginVertical: 10,
+    width: '100%',
+    height: 40,
+    marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: 'gray',
+    paddingHorizontal: 10,
+  },
+  registerButton: {
+    width: '100%',
+    backgroundColor: '#007BFF', 
+    padding: 10,
+    alignItems: 'center',
     borderRadius: 5,
+    marginBottom: 10,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
   },
 });
 

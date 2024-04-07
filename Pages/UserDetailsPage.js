@@ -26,7 +26,7 @@ const UserDetailsPage = ({ navigation }) => {
         const userId = await AsyncStorage.getItem('userId');
         const token = await AsyncStorage.getItem('userToken');
         if (userId && token) {
-          const response = await axios.get(`http://localhost:8080/api/v1/users/${userId}/details`, {
+          const response = await axios.get(`http://192.168.0.13:8080/api/v1/users/${userId}/details`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },

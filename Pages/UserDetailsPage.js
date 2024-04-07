@@ -68,7 +68,6 @@ const UserDetailsPage = ({ navigation }) => {
       };
   
       const response = await PutRequests.updateUser(userId, updatedUserData, token);
-      // Sprawdzamy, czy w odpowiedzi znajduje się pole 'id', co sugeruje sukces
       if (response && response.id) {
         Alert.alert("Sukces", "Dane użytkownika zostały zaktualizowane.");
       } else {
@@ -90,17 +89,12 @@ const UserDetailsPage = ({ navigation }) => {
       resizeMode="cover"
     >
       <View style={styles.navContainer}>
+        
         <TouchableOpacity
           style={styles.navButton}
-          onPress={() => navigation.navigate('Reservations')} 
+          onPress={() => navigation.navigate('StronaGlowna')} 
         >
-          <Text style={styles.navButtonText}>Rezerwacje</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.navButton}
-          onPress={() => navigation.navigate('Oferta')} 
-        >
-          <Text style={styles.navButtonText}>Oferta</Text>
+          <Text style={styles.navButtonText}>Strona główna</Text>
         </TouchableOpacity>
       </View>
 

@@ -6,7 +6,9 @@ import LoginPage from './Pages/LoginPage';
 import RegisterPage from './Pages/RegisterPage';
 import UserDetailsPage from './Pages/UserDetailsPage';
 import Oferta from './Pages/Oferta';
+import StronaGlowna from './Pages/StronaGlowna';
 import { useNavigation } from '@react-navigation/native';
+
 
 const Stack = createNativeStackNavigator();
 
@@ -26,12 +28,6 @@ function HomeScreen() {
         <TouchableOpacity onPress={() => navigation.navigate('Register')} style={styles.button}>
           <Text style={styles.buttonText}>Rejestracja</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('UserDetailsPage')} style={styles.button}>
-          <Text style={styles.buttonText}>Dane użytkownika</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('Oferta')} style={styles.button}>
-          <Text style={styles.buttonText}>Oferta</Text>
-        </TouchableOpacity>
       </ImageBackground>
     </View>
   );
@@ -46,6 +42,7 @@ export default function App() {
         <Stack.Screen name="Register" component={RegisterPage} options={{ headerShown: false }} />
         <Stack.Screen name="UserDetails" component={UserDetailsPage} options={{ headerShown: false }} />
         <Stack.Screen name="Oferta" component={Oferta} options={{ headerShown: false }} />
+        <Stack.Screen name="StronaGlowna" component={StronaGlowna} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

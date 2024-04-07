@@ -10,6 +10,9 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import GetRequests from '../communication/network/GetRequests';
+import {PutRequests} from '../communication/network/PutRequests';
+
 
 const UserDetailsPage = ({ navigation }) => {
   const [userData, setUserData] = useState({
@@ -26,34 +29,60 @@ const UserDetailsPage = ({ navigation }) => {
         const userId = await AsyncStorage.getItem('userId');
         const token = await AsyncStorage.getItem('userToken');
         if (userId && token) {
-          const response = await axios.get(`http://192.168.0.13:8080/api/v1/users/${userId}/details`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          setUserData({
-            firstName: response.data.firstName,
-            lastName: response.data.lastName,
-            email: response.data.email,
-            login: response.data.login,
-            phone: response.data.phone,
-          });
+          const response = await GetRequests.getUserDetailsById(userId, token);
+          setUserData(response);
         } else {
-          Alert.alert("Błąd", "Nie znaleziono tokenu lub ID użytkownika.");
+          Alert.alert("Błąd", "Nie można załadować szczegółów użytkownika.");
         }
       } catch (error) {
         console.error('Błąd podczas pobierania szczegółów użytkownika:', error);
         Alert.alert("Błąd", "Nie można załadować szczegółów użytkownika.");
       }
     };
-
+  
     fetchUserDetails();
   }, []);
-
+  
   const handleUpdate = (key, value) => {
-    setUserData((prev) => ({ ...prev, [key]: value }));
+    setUserData(prevUserData => ({
+      ...prevUserData,
+      [key]: value,
+    }));
   };
-
+    
+  const handleSaveChanges = async () => {
+    try {
+      const userId = await AsyncStorage.getItem('userId');
+      const token = await AsyncStorage.getItem('userToken');
+      if (!userId || !token) {
+        Alert.alert("Błąd", "Nie znaleziono tokenu lub ID użytkownika.");
+        return;
+      }
+  
+      const updatedUserData = {
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        email: userData.email,
+        login: userData.login,
+        phone: userData.phone,
+      };
+  
+      const response = await PutRequests.updateUser(userId, updatedUserData, token);
+      // Sprawdzamy, czy w odpowiedzi znajduje się pole 'id', co sugeruje sukces
+      if (response && response.id) {
+        Alert.alert("Sukces", "Dane użytkownika zostały zaktualizowane.");
+      } else {
+        Alert.alert("Błąd", "Nie udało się zaktualizować danych. Sprawdź logi dla szczegółów.");
+      }
+    } catch (error) {
+      console.error('Błąd aktualizacji danych użytkownika:', error);
+      Alert.alert("Błąd", "Nie można zaktualizować danych użytkownika.");
+    }
+  };
+  
+  
+  
+  
   return (
     <ImageBackground
       source={require('../assets/content-pixie-be-6rpnQ30k-unsplash.jpg')}
@@ -111,6 +140,10 @@ const UserDetailsPage = ({ navigation }) => {
           onChangeText={(text) => handleUpdate('phone', text)} 
         />
       </View>
+      <TouchableOpacity style={styles.saveButton} onPress={handleSaveChanges}>
+  <Text style={styles.buttonText}>Zapisz zmiany</Text>
+</TouchableOpacity>
+
     </ImageBackground>
   );
 };
@@ -156,6 +189,19 @@ const styles = StyleSheet.create({
     color: '#FFF',
     minHeight: 40,
   },
+  saveButton: {
+    backgroundColor: '#007BFF', 
+    padding: 10,
+    borderRadius: 5,
+    width: '100%',
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+  }
+  
 });
 
 export default UserDetailsPage;

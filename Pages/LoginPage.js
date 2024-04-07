@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, Button, Alert, StyleSheet } from 'react-native';
+import { View, TextInput, Text, TouchableOpacity, Alert, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 import { PostRequests } from '../communication/network/PostRequests';
 import GetRequests from '../communication/network/GetRequests';
 
@@ -16,8 +17,6 @@ const LoginPage = () => {
         const token = await AsyncStorage.getItem('userToken');
         if (token) {
           console.log('Token found:', token);
-          // Możesz tutaj dodać automatyczne przekierowanie, jeśli token jest dostępny
-          // navigation.navigate('UserDetails');
         } else {
           console.log('Token not found');
         }
@@ -33,33 +32,32 @@ const LoginPage = () => {
       const result = await PostRequests.logInUser(email, password);
       if (result.token) {
         console.log('Token:', result.token);
-
-        // Pobierz ID użytkownika na podstawie adresu e-mail
+    
         const userIdResponse = await GetRequests.getUserIdByEmail(email);
         if (userIdResponse) {
-          console.log('User ID:', userIdResponse[0]); // Pierwsza cyfra jako ID użytkownika
-          console.log('User Type:', userIdResponse[1]); // Druga cyfra jako typ konta
-
-          // Zapisz token i ID użytkownika do pamięci
+          console.log('User ID:', userIdResponse[0]);
+    
           await AsyncStorage.setItem('userToken', result.token);
           await AsyncStorage.setItem('userId', userIdResponse[0].toString());
-
-          // Przekieruj do UserDetailsPage
-          navigation.navigate('UserDetails');
+    
+          navigation.navigate('UserDetails', { userId: userIdResponse[0].toString() });
         } else {
           console.error('User ID not found');
         }
       } else {
-        Alert.alert('Logowanie nieudane', 'Nieprawidłowy e-mail lub hasło. Spróbuj ponownie.');
+        Alert.alert('Logowanie nieudane', 'Podano nieprawidłowy e-mail lub hasło. Spróbuj ponownie.');
       }
     } catch (error) {
-      console.error('Błąd logowania:', error.message);
-      Alert.alert('Błąd logowania', 'Wystąpił błąd podczas procesu logowania. Spróbuj ponownie później.');
+        Alert.alert('Logowanie nieudane', 'Podano nieprawidłowy e-mail lub hasło. Spróbuj ponownie.');
+      
     }
   };
+  
+  
 
   return (
     <View style={styles.container}>
+      <Text style={styles.title}>Logowanie</Text>
       <TextInput
         style={styles.input}
         placeholder="Email"
@@ -75,15 +73,21 @@ const LoginPage = () => {
         value={password}
         onChangeText={setPassword}
       />
-      <Button
-        title="Zaloguj się"
-        onPress={handleLogin}
-      />
+      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+        <Text style={styles.buttonText}>Zaloguj się</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.registerButton} onPress={() => navigation.navigate('Register')}>
+        <Text style={styles.buttonText}>Rejestracja</Text>
+      </TouchableOpacity>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  title: {
+    fontSize: 24,
+    marginBottom: 20,
+  },
   container: {
     flex: 1,
     justifyContent: 'center',
@@ -97,6 +101,26 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'gray',
     paddingHorizontal: 10,
+  },
+
+  loginButton: {
+    width: '100%',
+    backgroundColor: '#007BFF',
+    padding: 10,
+    alignItems: 'center',
+    borderRadius: 5,
+    marginBottom: 10,
+  },
+  registerButton: {
+    width: '100%',
+    backgroundColor: '#6c757d',
+    padding: 10,
+    alignItems: 'center',
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
   },
 });
 

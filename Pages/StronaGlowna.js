@@ -1,47 +1,63 @@
 import React, { useState } from 'react';
-import { View, Button, StyleSheet, Alert, ImageBackground } from 'react-native';
+import { View, TouchableOpacity, Text, StyleSheet, ImageBackground } from 'react-native';
+import { useNavigation } from '@react-navigation/native'; 
 
 const ThreeButtonsScreen = () => {
-  // Przykładowy stan typu konta (1, 2, lub 3)
-  // Możesz ustawić tę wartość dynamicznie na podstawie danych zalogowanego użytkownika
   const [accountTypeId, setAccountTypeId] = useState(1);
-
-  const backgroundImage = require('../assets/pexels-lukas-669577.jpg'); // Zastąp ścieżką do swojego obrazka
+  const navigation = useNavigation();
+  const backgroundImage = require('../assets/pexels-lukas-669577.jpg');
 
   const renderButtonsBasedOnAccountType = () => {
     switch (accountTypeId) {
-      case 2: // Dla typu konta 2
+      case 2:
         return (
           <>
-            <Button title="Pracownicy" onPress={() => Alert.alert("Pracownicy")} color="#007BFF" />
+            <TouchableOpacity style={styles.saveButton} onPress={() => navigation.navigate('AllEmployee')}>
+              <Text style={styles.buttonText}>Pracownicy</Text>
+            </TouchableOpacity>
             <View style={styles.spacing} />
-            <Button title="Rezerwacje" onPress={() => Alert.alert("Rezerwacje")} color="#28A745" />
+            <TouchableOpacity style={styles.saveButton} onPress={() => navigation.navigate('AllReservations')}>
+              <Text style={styles.buttonText}>Rezerwacje</Text>
+            </TouchableOpacity>
             <View style={styles.spacing} />
-            <Button title="Użytkownicy" onPress={() => Alert.alert("Użytkownicy")} color="#DC3545" />
+            <TouchableOpacity style={styles.saveButton} onPress={() => navigation.navigate('AllCustomer')}>
+              <Text style={styles.buttonText}>Użytkownicy</Text>
+            </TouchableOpacity>
             <View style={styles.spacing} />
-            <Button title="Zajęcia" onPress={() => Alert.alert("Zajęcia")} color="#6f42c1" />
+            <TouchableOpacity style={styles.saveButton} onPress={() => navigation.navigate('AllClasses')}>
+              <Text style={styles.buttonText}>Zajęcia</Text>
+            </TouchableOpacity>
           </>
         );
-      case 1: // Dla typu konta 1
+      case 1:
         return (
           <>
-            <Button title="Rezerwacje" onPress={() => Alert.alert("Rezerwacje")} color="#28A745" />
+            <TouchableOpacity style={styles.saveButton} onPress={() => navigation.navigate('AllReservations')}>
+              <Text style={styles.buttonText}>Rezerwacje</Text>
+            </TouchableOpacity>
             <View style={styles.spacing} />
-            <Button title="Zajęcia" onPress={() => Alert.alert("Zajęcia")} color="#6f42c1" />
+            <TouchableOpacity style={styles.saveButton} onPress={() => navigation.navigate('AllClasses')}>
+              <Text style={styles.buttonText}>Zajęcia</Text>
+            </TouchableOpacity>
           </>
         );
-      case 3: // Dla typu konta 3
+      case 3:
         return (
           <>
-            <Button title="Rezerwacje" onPress={() => Alert.alert("Rezerwacje")} color="#28A745" />
+            <TouchableOpacity style={styles.saveButton} onPress={() => navigation.navigate('Reservations')}>
+              <Text style={styles.buttonText}>Rezerwacje</Text>
+            </TouchableOpacity>
             <View style={styles.spacing} />
-            <Button title="Użytkownicy" onPress={() => Alert.alert("Użytkownicy")} color="#DC3545" />
+            <TouchableOpacity style={styles.saveButton} onPress={() => navigation.navigate('AllCustomer')}>
+              <Text style={styles.buttonText}>Użytkownicy</Text>
+            </TouchableOpacity>
             <View style={styles.spacing} />
-            <Button title="Zajęcia" onPress={() => Alert.alert("Zajęcia")} color="#6f42c1" />
+            <TouchableOpacity style={styles.saveButton} onPress={() => navigation.navigate('AllClasses')}>
+              <Text style={styles.buttonText}>Zajęcia</Text>
+            </TouchableOpacity>
           </>
         );
       default:
-        // Domyślnie nic nie wyświetlaj
         return null;
     }
   };
@@ -60,8 +76,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 20,
   },
+  saveButton: {
+    backgroundColor: '#007BFF',
+    padding: 10,
+    borderRadius: 5,
+    width: '100%',
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+  },
   spacing: {
-    height: 20, // Odstęp między przyciskami
+    height: 20,
   },
 });
 

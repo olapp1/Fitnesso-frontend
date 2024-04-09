@@ -56,7 +56,7 @@ class GetRequests {
                         Authorization: `Bearer ${token}`
                     }
                 });
-                return response.data; // Zwracamy tylko dane
+                return response.data; 
             } else {
                 console.error('Token is not available');
                 return null;
@@ -66,6 +66,99 @@ class GetRequests {
             return null;
         }
     }
+    static async getActiveFitnessClasses() {
+        try {
+            const token = await AsyncStorage.getItem('Token');
+            if (token) {
+                const response = await api.get(`${API_V1}/itness-classes/activeFull`, { 
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                return Utils.mapResponse(response); 
+            } else {
+                console.error('Token is not available');
+                return null;
+            }
+        } catch (error) {
+            Utils.handleError(error); 
+        }
+    }
+    static async getClassesPastEndDate() {
+        try {
+          const token = await AsyncStorage.getItem('Token');
+          if (token) {
+            const response = await api.get(`${API_V1}/itness-classes/endDate`, {
+              headers: {
+                Authorization: `Bearer ${token}`
+              }
+            });
+            return Utils.mapResponse(response);
+          } else {
+            console.error('Token is not available');
+            return null;
+          }
+        } catch (error) {
+          Utils.handleError(error);
+          return null;
+        }
+      }
+    
+      static async getActiveClassesWithVacancies() {
+        try {
+          const token = await AsyncStorage.getItem('Token');
+          if (token) {
+            const response = await api.get(`${API_V1}/itness-classes/active-with-vacancies`, {
+              headers: {
+                Authorization: `Bearer ${token}`
+              }
+            });
+            return Utils.mapResponse(response);
+          } else {
+            console.error('Token is not available');
+            return null;
+          }
+        } catch (error) {
+          Utils.handleError(error);
+          return null;
+        }
+      }
+      static async getUserAcceptedReservations(userId) {
+        try {
+          const token = await AsyncStorage.getItem('Token');
+          if (!token) {
+            console.error('Token is not available');
+            return null;
+          }
+          const response = await api.get(`/api/v1/reservations/user/${userId}/accepted`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          return Utils.mapResponse(response);
+        } catch (error) {
+          Utils.handleError(error);
+          return null;
+        }
+      }
+    
+      static async getUserNotAcceptedReservations(userId) {
+        try {
+          const token = await AsyncStorage.getItem('Token');
+          if (!token) {
+            console.error('Token is not available');
+            return null;
+          }
+          const response = await api.get(`/api/v1/reservations/user/${userId}/not-accepted`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          return Utils.mapResponse(response);
+        } catch (error) {
+          Utils.handleError(error);
+          return null;
+        }
+      }
+    
+    
 }
+
 
 export default GetRequests;

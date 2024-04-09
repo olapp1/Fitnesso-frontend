@@ -7,6 +7,8 @@ import RegisterPage from './Pages/RegisterPage';
 import UserDetailsPage from './Pages/UserDetailsPage';
 import Oferta from './Pages/Oferta';
 import StronaGlowna from './Pages/StronaGlowna';
+import AllClasses from './Pages/AllClassesPage';
+import AllReservations from './Pages/AllReservationsPage';
 import { useNavigation } from '@react-navigation/native';
 
 
@@ -43,6 +45,8 @@ export default function App() {
         <Stack.Screen name="UserDetails" component={UserDetailsPage} options={{ headerShown: false }} />
         <Stack.Screen name="Oferta" component={Oferta} options={{ headerShown: false }} />
         <Stack.Screen name="StronaGlowna" component={StronaGlowna} options={{ headerShown: false }} />
+        <Stack.Screen name="AllClasses" component={AllClasses} options={{ headerShown: false }} />
+        <Stack.Screen name="AllReservations" component={AllReservations} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -62,7 +66,7 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 24,
     fontWeight: "bold",
-    backgroundColor: "#000000a0", // Półprzezroczyste tło dla tekstu
+    backgroundColor: "#000000a0", 
     padding: 10,
   },
   button: {

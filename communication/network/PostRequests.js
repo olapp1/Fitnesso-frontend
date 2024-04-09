@@ -42,4 +42,28 @@ export class PostRequests {
     return apiAuth.post(Post.USER_LOGOUT).then(Utils.mapResponse)
         .catch(Utils.handleError);
   }
+
+  static async reserveClass(userId, fitnessClassId) {
+    try {
+      const token = await AsyncStorage.getItem('Token');
+      if (!token) {
+        console.error('Token is not available');
+        return null;
+      }
+
+      const response = await apiAuth.post(Post.RESERVATION_ADD, {
+        user: userId,
+        fitnessClass: fitnessClassId,
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      return Utils.mapResponse(response);
+    } catch (error) {
+      Utils.handleError(error);
+      return null;
+    }
+  }
 }

@@ -7,14 +7,17 @@ export const Get = {
     EMPLOYEES: API_V1 + USERS + "/employees",
     ONLY_USERS: API_V1 + USERS + "/users",
     USER_BY_EMAIL: (email) => `${API_V1}${USERS}/by-email?email=${email}`,
+    
 
 };
 
 export const Post = {
     USER: API_V1 + "/auth/login",
     USERREG: API_V1 + "/auth/register",
-    USER_LOGOUT: "/logout",
+    USER_LOGOUT: API_V1 + "/logout", 
+    RESERVATION_ADD: API_V1 + "/reservations/add" 
 };
+
 
 export const Put = {
     USER_UPDATE: (userId) => `${API_V1}${USERS}/${userId}`,
@@ -22,4 +25,5 @@ export const Put = {
 
 export const Delete = {
     USER_DELETE: (userId) => `${API_V1}${USERS}/${userId}`,
+    RESERVATION_DELETE: (reservationId) => `${API_V1}/reservations/${reservationId}`
 };

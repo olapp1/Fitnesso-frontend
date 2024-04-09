@@ -16,7 +16,7 @@ const ThreeButtonsScreen = () => {
               <Text style={styles.buttonText}>Pracownicy</Text>
             </TouchableOpacity>
             <View style={styles.spacing} />
-            <TouchableOpacity style={styles.saveButton} onPress={() => navigation.navigate('AllReservations')}>
+            <TouchableOpacity style={styles.saveButton} onPress={() => navigation.navigate('WorkerReservations')}>
               <Text style={styles.buttonText}>Rezerwacje</Text>
             </TouchableOpacity>
             <View style={styles.spacing} />
@@ -24,7 +24,7 @@ const ThreeButtonsScreen = () => {
               <Text style={styles.buttonText}>Użytkownicy</Text>
             </TouchableOpacity>
             <View style={styles.spacing} />
-            <TouchableOpacity style={styles.saveButton} onPress={() => navigation.navigate('AllClasses')}>
+            <TouchableOpacity style={styles.saveButton} onPress={() => navigation.navigate('WorkerClasses')}>
               <Text style={styles.buttonText}>Zajęcia</Text>
             </TouchableOpacity>
           </>
@@ -44,7 +44,7 @@ const ThreeButtonsScreen = () => {
       case 3:
         return (
           <>
-            <TouchableOpacity style={styles.saveButton} onPress={() => navigation.navigate('Reservations')}>
+            <TouchableOpacity style={styles.saveButton} onPress={() => navigation.navigate('WorkerReservations')}>
               <Text style={styles.buttonText}>Rezerwacje</Text>
             </TouchableOpacity>
             <View style={styles.spacing} />
@@ -52,7 +52,7 @@ const ThreeButtonsScreen = () => {
               <Text style={styles.buttonText}>Użytkownicy</Text>
             </TouchableOpacity>
             <View style={styles.spacing} />
-            <TouchableOpacity style={styles.saveButton} onPress={() => navigation.navigate('AllClasses')}>
+            <TouchableOpacity style={styles.saveButton} onPress={() => navigation.navigate('WorkerClasses')}>
               <Text style={styles.buttonText}>Zajęcia</Text>
             </TouchableOpacity>
           </>

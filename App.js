@@ -9,6 +9,7 @@ import Oferta from './Pages/Oferta';
 import StronaGlowna from './Pages/StronaGlowna';
 import AllClasses from './Pages/AllClassesPage';
 import AllReservations from './Pages/AllReservationsPage';
+import WorkerReservations from './Pages/WorkerReservationsPage';
 import { useNavigation } from '@react-navigation/native';
 
 
@@ -30,6 +31,10 @@ function HomeScreen() {
         <TouchableOpacity onPress={() => navigation.navigate('Register')} style={styles.button}>
           <Text style={styles.buttonText}>Rejestracja</Text>
         </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => navigation.navigate('WorkerReservations')} style={styles.button}>
+          <Text style={styles.buttonText}>Zarządzanie rezerwacjami</Text>
+        </TouchableOpacity>
       </ImageBackground>
     </View>
   );
@@ -47,6 +52,7 @@ export default function App() {
         <Stack.Screen name="StronaGlowna" component={StronaGlowna} options={{ headerShown: false }} />
         <Stack.Screen name="AllClasses" component={AllClasses} options={{ headerShown: false }} />
         <Stack.Screen name="AllReservations" component={AllReservations} options={{ headerShown: false }} />
+        <Stack.Screen name="WorkerReservations" component={WorkerReservations} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

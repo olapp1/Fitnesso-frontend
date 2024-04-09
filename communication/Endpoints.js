@@ -21,6 +21,8 @@ export const Post = {
 
 export const Put = {
     USER_UPDATE: (userId) => `${API_V1}${USERS}/${userId}`,
+    ACCEPT_RESERVATION: (reservationId) => `${API_V1}/reservations/${reservationId}/accept`,
+    ACCEPT_ALL_RESERVATIONS: `${API_V1}/reservations/accept/all`,
 };
 
 export const Delete = {

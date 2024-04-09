@@ -19,5 +19,36 @@ export class PutRequests {
         return null;
       }
     }
+    static async acceptReservation(reservationId, token) {
+      try {
+        const url = Put.ACCEPT_RESERVATION(reservationId);
+        const response = await api.put(url, null, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        return Utils.mapResponse(response);
+      } catch (error) {
+        Utils.handleError(error);
+        return null;
+      }
+    }
+  
+    static async acceptAllReservations(token) {
+      try {
+        const url = Put.ACCEPT_ALL_RESERVATIONS;
+        const response = await api.put(url, null, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        return Utils.mapResponse(response);
+      } catch (error) {
+        Utils.handleError(error);
+        return null;
+      }
+    }
   }
   

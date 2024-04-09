@@ -5,7 +5,7 @@ import GetRequests from '../communication/network/GetRequests';
 import { PostRequests } from '../communication/network/PostRequests';
 
 const ActiveFitnessClassesPage = () => {
-  const [userTypeId, setUserTypeId] = useState(1); // Pobierz ten stan na podstawie zalogowanego użytkownika
+  const [userTypeId, setUserTypeId] = useState(1); 
   const [activeClassesWithVacancies, setActiveClassesWithVacancies] = useState([]);
   const [classes, setClasses] = useState([]);
   const [classesPastEndDate, setClassesPastEndDate] = useState([]);
@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   buttonSpacing: {
-    height: 10, // Ustawienie wysokości na 10 dla odstępu między przyciskami
+    height: 10, 
   },
   loadingContainer: {
     justifyContent: 'center',

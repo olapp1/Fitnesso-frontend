@@ -1,48 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { View, Text, FlatList, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, StyleSheet, ActivityIndicator, TouchableOpacity, Button, Alert } from 'react-native';
 import GetRequests from '../communication/network/GetRequests';
 import { PostRequests } from '../communication/network/PostRequests';
-import { Alert } from 'react-native';
 
 const ActiveFitnessClassesPage = () => {
-  const [userTypeId, setUserTypeId] = useState(1);
+  const [userTypeId, setUserTypeId] = useState(1); // Pobierz ten stan na podstawie zalogowanego użytkownika
   const [activeClassesWithVacancies, setActiveClassesWithVacancies] = useState([]);
   const [classes, setClasses] = useState([]);
   const [classesPastEndDate, setClassesPastEndDate] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentView, setCurrentView] = useState('activeClassesWithVacancies');
 
-  const fetchData = async () => { // Definicja funkcji fetchData
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
     setLoading(true);
     try {
       const activeClassesWithVacanciesData = await GetRequests.getActiveClassesWithVacancies();
       const classesData = await GetRequests.getActiveFitnessClasses();
       const classesPastEndDateData = await GetRequests.getClassesPastEndDate();
-
-      setActiveClassesWithVacancies(activeClassesWithVacanciesData);
-      setClasses(classesData);
-      setClassesPastEndDate(classesPastEndDateData);
+      setActiveClassesWithVacancies(activeClassesWithVacanciesData || []);
+      setClasses(classesData || []);
+      setClassesPastEndDate(classesPastEndDateData || []);
     } catch (error) {
-      console.error('Błąd podczas ładowania danych:', error);
+      console.error('Error fetching data:', error);
     } finally {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const activeClassesWithVacanciesData = await GetRequests.getActiveClassesWithVacancies();
-      const classesData = await GetRequests.getActiveFitnessClasses();
-      const classesPastEndDateData = await GetRequests.getClassesPastEndDate();
-      
-      if (classesData) setClasses(classesData);
-      if (classesPastEndDateData) setClassesPastEndDate(classesPastEndDateData);
-      if (activeClassesWithVacanciesData) setActiveClassesWithVacancies(activeClassesWithVacanciesData);
-      setLoading(false);
-    };
-
-    fetchData();
-  }, []);
 
   const reserveClass = async (classId) => {
     try {
@@ -63,7 +51,7 @@ const ActiveFitnessClassesPage = () => {
           "Rezerwacja dodana",
           "Twoja rezerwacja została pomyślnie dodana.",
           [
-            { text: "OK", onPress: () => fetchData() } // Ponowne wywołanie funkcji fetchData
+            { text: "OK", onPress: () => fetchData() } 
           ]
         );
     
@@ -74,72 +62,58 @@ const ActiveFitnessClassesPage = () => {
       console.error('Błąd podczas rezerwacji:', error);
     }
   };
-  
-  if (loading) {
-    return (
-      <View style={[styles.container, styles.loadingContainer]}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
-  }
 
   const renderItem = ({ item }) => {
     const now = new Date();
     const endDate = new Date(item.endDate);
     const isPast = endDate < now;
     const availablePlaces = item.maxPlace - item.activePlace;
-  
+
     return (
       <View style={styles.itemContainer}>
-        {/* Informacje o zajęciach */}
-        <Text style={styles.text}>Typ zajęć: {item.fitenssTypeClass ? item.fitenssTypeClass.nameType : 'Brak danych'}</Text>
-        <Text style={styles.text}>Data rozpoczęcia: {item.startDate}</Text>
-        <Text style={styles.text}>Data zakończenia: {item.endDate}</Text>
-        <Text style={styles.text}>Miejsca zajęte: {item.activePlace}</Text>
-        <Text style={styles.text}>Miejsca maks.: {item.maxPlace}</Text>
-        <Text style={styles.text}>Prowadzący: {item.user ? `${item.user.firstName} ${item.user.lastName}` : 'Brak danych'}</Text>
+        <Text style={styles.text}>Typ zajęć: {item.fitenssTypeClass ? item.fitenssTypeClass.nameType : 'No data'}</Text>
+        <Text style={styles.text}>Początek: {item.startDate}</Text>
+        <Text style={styles.text}>Koniec: {item.endDate}</Text>
+        <Text style={styles.text}>Zajęte miejsca: {item.activePlace}</Text>
+        <Text style={styles.text}>Maksymalna liczba miejsc: {item.maxPlace}</Text>
+        <Text style={styles.text}>Instruktor: {item.user ? `${item.user.firstName} ${item.user.lastName}` : 'No data'}</Text>
         <View style={styles.buttonsContainer}>
           {userTypeId === 2 || userTypeId === 3 ? (
             <>
-              <TouchableOpacity style={styles.button} onPress={() => console.log(`Edytuj zajęcia o ID: ${item.id}`)}>
+              <TouchableOpacity style={styles.button} onPress={() => console.log(`Edit class ID: ${item.id}`)}>
                 <Text style={styles.buttonText}>Edytuj</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.button} onPress={() => console.log(`Usuń zajęcia o ID: ${item.id}`)}>
+              <TouchableOpacity style={styles.button} onPress={() => console.log(`Delete class ID: ${item.id}`)}>
                 <Text style={styles.buttonText}>Usuń</Text>
               </TouchableOpacity>
             </>
           ) : null}
           {!isPast && availablePlaces > 0 && userTypeId === 1 ? (
             <TouchableOpacity style={styles.button} onPress={() => reserveClass(item.id)}>
-            <Text style={styles.buttonText}>Zarezerwuj</Text>
+              <Text style={styles.buttonText}>Zarezerwuj</Text>
             </TouchableOpacity>
-
           ) : null}
         </View>
       </View>
     );
   };
 
+  if (loading) {
+    return <View style={[styles.container, styles.loadingContainer]}><ActivityIndicator size="large" /></View>;
+  }
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Zajęcia z wolnymi miejscami</Text>
+      <View style={styles.buttonsContainer}>
+        <Button title="Aktywne zapisy na zajęcia" onPress={() => setCurrentView('activeClassesWithVacancies')} />
+        <View style={styles.buttonSpacing}></View>
+        <Button title="W pełni zarezerwowane zajęcia" onPress={() => setCurrentView('classes')} />
+        <View style={styles.buttonSpacing}></View>
+        <Button title="Historia zajęć" onPress={() => setCurrentView('classesPastEndDate')} />
+      </View>
       <FlatList
-        data={activeClassesWithVacancies}
-        keyExtractor={(item, index) => `${index}vacancies`}
-        renderItem={renderItem}
-        contentContainerStyle={styles.listContainer}
-      />
-      <Text style={styles.title}>W pełni zarezerwowane zajęcia</Text>
-      <FlatList
-        data={classes}
-        keyExtractor={(item, index) => `${index}`}
-        renderItem={renderItem}
-        contentContainerStyle={styles.listContainer}
-      />
-      <Text style={styles.title}>Historia zajęć</Text>
-      <FlatList
-        data={classesPastEndDate}
-        keyExtractor={(item, index) => `${index}past`}
+        data={currentView === 'activeClassesWithVacancies' ? activeClassesWithVacancies : currentView === 'classes' ? classes : classesPastEndDate}
+        keyExtractor={(item, index) => `${currentView}-${index}`}
         renderItem={renderItem}
         contentContainerStyle={styles.listContainer}
       />
@@ -151,6 +125,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+  },
+  buttonSpacing: {
+    height: 10, // Ustawienie wysokości na 10 dla odstępu między przyciskami
   },
   loadingContainer: {
     justifyContent: 'center',
@@ -177,11 +154,9 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   buttonsContainer: {
-    flexDirection: 'row',
-    marginTop: 10,
+    marginBottom: 20,
   },
   button: {
-    marginRight: 10,
     backgroundColor: "#007BFF",
     padding: 10,
     borderRadius: 5,

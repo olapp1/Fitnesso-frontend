@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, ActivityIndicator, TouchableOpacity, Alert } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import GetRequests from '../communication/network/GetRequests'; 
-import {DeleteRequests} from '../communication/network/DeleteRequests';
+import { View, Text, FlatList, StyleSheet, ActivityIndicator, TouchableOpacity, Alert, Button } from 'react-native';
+import GetRequests from '../communication/network/GetRequests';
 
 const AllReservationsScreen = () => {
-  const [acceptedReservations, setAcceptedReservations] = useState([]);
-  const [notAcceptedReservations, setNotAcceptedReservations] = useState([]);
+  const [reservations, setReservations] = useState({
+    accepted: [],
+    notAccepted: [],
+  });
   const [loading, setLoading] = useState(true);
+  const [currentView, setCurrentView] = useState('accepted');
 
   useEffect(() => {
     fetchReservations();
@@ -16,15 +17,12 @@ const AllReservationsScreen = () => {
   const fetchReservations = async () => {
     setLoading(true);
     try {
-      const userId = await AsyncStorage.getItem('userId');
-      if (userId) {
-        const accepted = await GetRequests.getUserAcceptedReservations(userId);
-        const notAccepted = await GetRequests.getUserNotAcceptedReservations(userId);
-        setAcceptedReservations(accepted || []);
-        setNotAcceptedReservations(notAccepted || []);
-      } else {
-        console.log('UserId not found');
-      }
+      const accepted = await GetRequests.getAcceptedReservations();
+      const notAccepted = await GetRequests.getNotAcceptedReservations();
+      setReservations({
+        accepted: accepted || [],
+        notAccepted: notAccepted || [],
+      });
     } catch (error) {
       console.error('Error fetching reservations:', error);
     } finally {
@@ -33,7 +31,6 @@ const AllReservationsScreen = () => {
   };
 
   const handleDelete = async (reservationId) => {
-    console.log(`Próba usunięcia rezerwacji o ID: ${reservationId}`);
     Alert.alert(
       'Potwierdzenie',
       'Czy na pewno chcesz usunąć tę rezerwację?',
@@ -64,11 +61,10 @@ const AllReservationsScreen = () => {
       { cancelable: false }
     );
   };
-  
 
   const renderItem = ({ item }) => (
     <View style={styles.reservationItem}>
-      <Text style={styles.reservationText}>Data rezerwacji: {item.dataReservation}</Text>
+     <Text style={styles.reservationText}>Data rezerwacji: {item.dataReservation}</Text>
       <Text style={styles.reservationText}>Typ zajęć: {item.fitnessClass.fitenssTypeClass.nameType}</Text>
       <Text style={styles.reservationText}>Data rozpoczęcia: {item.fitnessClass.startDate}</Text>
       <Text style={styles.reservationText}>Data zakończenia: {item.fitnessClass.endDate}</Text>
@@ -89,16 +85,12 @@ const AllReservationsScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Zaakceptowane Rezerwacje</Text>
+      <View style={styles.buttonContainer}>
+        <Button title="Zaakceptowane" onPress={() => setCurrentView('accepted')} />
+        <Button title="Niezaakceptowane" onPress={() => setCurrentView('notAccepted')} />
+      </View>
       <FlatList
-        data={acceptedReservations}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={renderItem}
-        ItemSeparatorComponent={renderSeparator}
-      />
-      <Text style={styles.title}>Niezaakceptowane Rezerwacje</Text>
-      <FlatList
-        data={notAcceptedReservations}
+        data={currentView === 'accepted' ? reservations.accepted : reservations.notAccepted}
         keyExtractor={(item) => item.id.toString()}
         renderItem={renderItem}
         ItemSeparatorComponent={renderSeparator}
@@ -108,16 +100,10 @@ const AllReservationsScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  deleteButton: {
-    marginTop: 10,
-    backgroundColor: 'red',
-    padding: 10,
-    borderRadius: 5,
-    alignSelf: 'flex-start',
-  },
-  deleteButtonText: {
-    color: 'white',
-    fontSize: 16,
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginBottom: 20,
   },
   container: {
     flex: 1,
@@ -143,6 +129,17 @@ const styles = StyleSheet.create({
   reservationText: {
     fontSize: 16,
     marginBottom: 5,
+  },
+  deleteButton: {
+    marginTop: 10,
+    backgroundColor: 'red',
+    padding: 10,
+    borderRadius: 5,
+    alignSelf: 'flex-start',
+  },
+  deleteButtonText: {
+    color: 'white',
+    fontSize: 16,
   },
   separator: {
     height: 1,

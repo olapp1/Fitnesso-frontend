@@ -51,7 +51,7 @@ class GetRequests {
         try {
             const token = await AsyncStorage.getItem('Token');
             if (token) {
-                const response = await api.get(`/api/v1/users/by-email?email=${email}`, {
+                const response = await api.get(`${API_V1}/users/by-email?email=${email}`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -130,7 +130,7 @@ class GetRequests {
             console.error('Token is not available');
             return null;
           }
-          const response = await api.get(`/api/v1/reservations/user/${userId}/accepted`, {
+          const response = await api.get(`${API_V1}/reservations/user/${userId}/accepted`, {
             headers: { Authorization: `Bearer ${token}` },
           });
           return Utils.mapResponse(response);
@@ -147,7 +147,7 @@ class GetRequests {
             console.error('Token is not available');
             return null;
           }
-          const response = await api.get(`/api/v1/reservations/user/${userId}/not-accepted`, {
+          const response = await api.get(`${API_V1}/reservations/user/${userId}/not-accepted`, {
             headers: { Authorization: `Bearer ${token}` },
           });
           return Utils.mapResponse(response);
@@ -156,6 +156,31 @@ class GetRequests {
           return null;
         }
       }
+      static async getAcceptedReservations() {
+        try {
+            const response = await api.get(`${API_V1}/reservations/accepted`);
+            return Utils.mapResponse(response);
+        } catch (error) {
+            Utils.handleError(error);
+        }
+    }
+
+    static async getAllReservations() {
+        try {
+            const response = await api.get(`${API_V1}/reservations/all`);
+            return Utils.mapResponse(response);
+        } catch (error) {
+            Utils.handleError(error);
+        }
+    }
+
+    static async getNotAcceptedReservations() {
+        try {
+            const response = await api.get(`${API_V1}/reservations/not-accepted`);
+            return Utils.mapResponse(response);
+        } catch (error) {
+            Utils.handleError(error);
+        }}
     
     
 }

@@ -28,6 +28,29 @@ export class DeleteRequests {
       return false;
     }
   }
+  static async deleteClass(classId) {
+    try {
+      const token = await AsyncStorage.getItem('Token');
+      if (!token) {
+        console.error('Token is not available');
+        return null;
+      }
+      const response = await apiAuth.delete(`/api/v1/itness-classes/${classId}/classsDelete`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (response.status === 200) {
+        console.log(`Classes ${classId} deleted successfully`);
+        return true;
+      } else {
+        const errorMessage = response.data ? response.data.message : 'Failed to delete classes';
+        console.error(`Error: ${errorMessage}`);
+        return false;
+      }
+    } catch (error) {
+      console.error('Error during reservation deletion:', error);
+      return false;
+    }
+  }
 
 }
 

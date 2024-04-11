@@ -15,7 +15,6 @@ import { useNavigation } from '@react-navigation/native';
 
 const Stack = createNativeStackNavigator();
 
-// Użyj `require` zamiast obiektu z uri dla lokalnych zasobów
 const backgroundImage = require('./assets/pedro-araujo-PDjYClxmnyk-unsplash.jpg');
 
 function HomeScreen() {
@@ -35,6 +34,11 @@ function HomeScreen() {
         <TouchableOpacity onPress={() => navigation.navigate('WorkerReservations')} style={styles.button}>
           <Text style={styles.buttonText}>Zarządzanie rezerwacjami</Text>
         </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => navigation.navigate('AllClasses')} style={styles.button}>
+          <Text style={styles.buttonText}>Zarządzanie zajęciami</Text>
+        </TouchableOpacity>
+
       </ImageBackground>
     </View>
   );

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, ActivityIndicator, Button } from 'react-native';
+import { View, Text, FlatList, StyleSheet, ActivityIndicator, Button, TouchableOpacity, Alert  } from 'react-native';
+import { PutRequests } from '../communication/network/PutRequests';
 import GetRequests from '../communication/network/GetRequests';
 
 const AllReservationsScreen = () => {
@@ -10,14 +11,14 @@ const AllReservationsScreen = () => {
   });
   const [filteredReservations, setFilteredReservations] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState('all'); // Dodany stan do zarządzania filtrem
+  const [filter, setFilter] = useState('all');
 
   useEffect(() => {
     fetchReservations();
   }, []);
 
   useEffect(() => {
-    // Zaktualizuj filtrację po zmianie filtra
+    
     setFilteredReservations(reservations[filter]);
   }, [filter, reservations]);
 
@@ -34,13 +35,51 @@ const AllReservationsScreen = () => {
         accepted: accepted || [],
         notAccepted: notAccepted || [],
       });
-      setFilteredReservations(all || []); // Domyślnie wyświetl wszystkie rezerwacje
+      setFilteredReservations(all || []);
     } catch (error) {
       console.error('Error fetching reservations:', error);
     } finally {
       setLoading(false);
     }
   };
+
+  const acceptReservation = async (reservationId) => {
+    try {
+      await PutRequests.acceptReservation(reservationId);
+      
+      fetchReservations(); 
+  
+      Alert.alert(
+        "Rezerwacja zaakceptowana",
+        `Rezerwacja o ID ${reservationId} została pomyślnie zaakceptowana.`,
+        [
+          { text: "OK", onPress: () => {} } 
+        ]
+      );
+    } catch (error) {
+      console.error('Error accepting reservation:', error);
+    }
+  };
+  
+  
+  const acceptAllReservations = async () => {
+    try {
+      await PutRequests.acceptAllReservations();
+      
+      fetchReservations();
+  
+      Alert.alert(
+        "Wszystkie rezerwacje zaakceptowane",
+        "Wszystkie rezerwacje zostały pomyślnie zaakceptowane.",
+        [
+          { text: "OK", onPress: () => {} } 
+        ]
+      );
+    } catch (error) {
+      console.error('Error accepting all reservations:', error);
+    }
+  };
+  
 
   const renderItem = ({ item }) => (
     <View style={styles.reservationItem}>
@@ -49,7 +88,11 @@ const AllReservationsScreen = () => {
       <Text style={styles.reservationText}>Data rozpoczęcia: {item.fitnessClass.startDate}</Text>
       <Text style={styles.reservationText}>Data zakończenia: {item.fitnessClass.endDate}</Text>
       <Text style={styles.reservationText}>Prowadzący: {item.fitnessClass.user.firstName} {item.fitnessClass.user.lastName}</Text>
-      
+      {!item.isPurchased && (
+      <TouchableOpacity style={styles.acceptButton} onPress={() => acceptReservation(item.id)}>
+      <Text style={styles.buttonText}>Akceptuj</Text>
+    </TouchableOpacity>
+    )}
     </View>
   );
 
@@ -61,8 +104,15 @@ const AllReservationsScreen = () => {
     <View style={styles.container}>
       <View style={styles.buttonContainer}>
         <Button title="Wszystkie" onPress={() => setFilter('all')} />
+        <View style={styles.buttonSpacing}></View>
         <Button title="Zaakceptowane" onPress={() => setFilter('accepted')} />
+        <View style={styles.buttonSpacing}></View>
         <Button title="Niezaakceptowane" onPress={() => setFilter('notAccepted')} />
+        <View style={styles.buttonSpacing}></View>
+        <TouchableOpacity style={styles.acceptButton} onPress={acceptAllReservations}>
+          <Text style={styles.buttonText}>Akceptuj wszystkie rezerwacje</Text>
+        </TouchableOpacity>
+        
       </View>
       <FlatList
         data={filteredReservations}
@@ -75,14 +125,23 @@ const AllReservationsScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  acceptButton: {
+    backgroundColor: '#4CAF50',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginVertical: 5,
+  },
+  buttonText: {
+    color: '#FFFFFF',
+    fontWeight: 'bold',
+  },
   container: {
     flex: 1,
     padding: 20,
   },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginBottom: 20,
+  buttonSpacing: {
+    height: 10, 
   },
   centered: {
     flex: 1,
@@ -104,6 +163,17 @@ const styles = StyleSheet.create({
     backgroundColor: "#cccccc",
     width: "100%",
     marginVertical: 8,
+  },
+  buttonsContainer: {
+    marginBottom: 20,
+  },
+  button: {
+    backgroundColor: "#007BFF",
+    padding: 10,
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: "#FFFFFF",
   },
 });
 

@@ -41,10 +41,10 @@ const RegisterPage = ({ navigation }) => {
     PostRequests.registerUser(firstName, lastName, login, email, password, phone)
       .then(response => {
         Alert.alert("Sukces", "Rejestracja przebiegła pomyślnie.");
-        navigation.navigate('Login'); // Upewnij się, że 'Login' odpowiada nazwie ekranu logowania w Twoim Stack Navigatorze.
+        navigation.navigate('Login'); 
       })
       .catch(error => {
-        // W praktyce tutaj powinieneś wyświetlić bardziej szczegółowy komunikat błędu zwrócony przez serwer, jeśli to możliwe
+        
         Alert.alert("Błąd rejestracji", "Wystąpił problem podczas rejestracji. Spróbuj ponownie.");
         console.error(error);
       });

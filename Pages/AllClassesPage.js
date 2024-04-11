@@ -3,9 +3,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { View, Text, FlatList, StyleSheet, ActivityIndicator, TouchableOpacity, Button, Alert } from 'react-native';
 import GetRequests from '../communication/network/GetRequests';
 import { PostRequests } from '../communication/network/PostRequests';
+import { DeleteRequests } from '../communication/network/DeleteRequests';
 
 const ActiveFitnessClassesPage = () => {
-  const [userTypeId, setUserTypeId] = useState(1); // Pobierz ten stan na podstawie zalogowanego użytkownika
+  const [userTypeId, setUserTypeId] = useState(1); 
   const [activeClassesWithVacancies, setActiveClassesWithVacancies] = useState([]);
   const [classes, setClasses] = useState([]);
   const [classesPastEndDate, setClassesPastEndDate] = useState([]);
@@ -63,6 +64,24 @@ const ActiveFitnessClassesPage = () => {
     }
   };
 
+  const deleteClass = async (classId) => {
+    try {
+    
+      const result = await DeleteRequests.deleteClass(classId);
+      if (result) {
+        Alert.alert(
+          "Klasa usunięta",
+          "Zajecia zostały pomyślnie usunięte.",
+          [{ text: "OK", onPress: () => fetchData() }]
+        );
+      } else {
+        console.log('Nie udało się usunąć zajęć.');
+      }
+    } catch (error) {
+      console.error('Błąd podczas usuwania zajęć:', error);
+    }
+  };
+  
   const renderItem = ({ item }) => {
     const now = new Date();
     const endDate = new Date(item.endDate);
@@ -83,9 +102,12 @@ const ActiveFitnessClassesPage = () => {
               <TouchableOpacity style={styles.button} onPress={() => console.log(`Edit class ID: ${item.id}`)}>
                 <Text style={styles.buttonText}>Edytuj</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.button} onPress={() => console.log(`Delete class ID: ${item.id}`)}>
-                <Text style={styles.buttonText}>Usuń</Text>
-              </TouchableOpacity>
+              <View style={styles.buttonSpacing}></View>
+              <TouchableOpacity style={styles.button} onPress={() => deleteClass(item.id)}>
+             <Text style={styles.buttonText}>Usuń</Text>
+            </TouchableOpacity>
+
+              <View style={styles.buttonSpacing}></View>
             </>
           ) : null}
           {!isPast && availablePlaces > 0 && userTypeId === 1 ? (
@@ -127,7 +149,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   buttonSpacing: {
-    height: 10, // Ustawienie wysokości na 10 dla odstępu między przyciskami
+    height: 10, 
   },
   loadingContainer: {
     justifyContent: 'center',

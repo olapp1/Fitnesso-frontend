@@ -13,19 +13,19 @@ const ThreeButtonsScreen = () => {
         return (
           <>
             <TouchableOpacity style={styles.saveButton} onPress={() => navigation.navigate('AllEmployee')}>
-              <Text style={styles.buttonText}>Pracownicy</Text>
+              <Text style={styles.buttonText}>Zarządzanie pracownikami</Text>
             </TouchableOpacity>
             <View style={styles.spacing} />
             <TouchableOpacity style={styles.saveButton} onPress={() => navigation.navigate('WorkerReservations')}>
-              <Text style={styles.buttonText}>Rezerwacje</Text>
+              <Text style={styles.buttonText}>Zarządzanie rezerwacjami</Text>
             </TouchableOpacity>
             <View style={styles.spacing} />
             <TouchableOpacity style={styles.saveButton} onPress={() => navigation.navigate('AllCustomer')}>
-              <Text style={styles.buttonText}>Użytkownicy</Text>
+              <Text style={styles.buttonText}>Zarządzanie użytkownikami</Text>
             </TouchableOpacity>
             <View style={styles.spacing} />
             <TouchableOpacity style={styles.saveButton} onPress={() => navigation.navigate('WorkerClasses')}>
-              <Text style={styles.buttonText}>Zajęcia</Text>
+              <Text style={styles.buttonText}>Zarządzanie zajęciami</Text>
             </TouchableOpacity>
           </>
         );
@@ -45,15 +45,15 @@ const ThreeButtonsScreen = () => {
         return (
           <>
             <TouchableOpacity style={styles.saveButton} onPress={() => navigation.navigate('WorkerReservations')}>
-              <Text style={styles.buttonText}>Rezerwacje</Text>
+              <Text style={styles.buttonText}>Zarządzanie rezerwacjami</Text>
             </TouchableOpacity>
             <View style={styles.spacing} />
             <TouchableOpacity style={styles.saveButton} onPress={() => navigation.navigate('AllCustomer')}>
-              <Text style={styles.buttonText}>Użytkownicy</Text>
+              <Text style={styles.buttonText}>Zarządzanie użytkownikami</Text>
             </TouchableOpacity>
             <View style={styles.spacing} />
             <TouchableOpacity style={styles.saveButton} onPress={() => navigation.navigate('WorkerClasses')}>
-              <Text style={styles.buttonText}>Zajęcia</Text>
+              <Text style={styles.buttonText}>Zarządzanie zajęciami</Text>
             </TouchableOpacity>
           </>
         );

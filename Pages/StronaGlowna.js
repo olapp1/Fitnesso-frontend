@@ -1,11 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, TouchableOpacity, Text, StyleSheet, ImageBackground } from 'react-native';
 import { useNavigation } from '@react-navigation/native'; 
+import GetRequests from '../communication/network/GetRequests';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ThreeButtonsScreen = () => {
-  const [accountTypeId, setAccountTypeId] = useState(1);
+  const [accountTypeId, setAccountTypeId] = useState(null);
   const navigation = useNavigation();
   const backgroundImage = require('../assets/pexels-lukas-669577.jpg');
+
+  useEffect(() => {
+    const fetchAccountType = async () => {
+      try {
+        const userId = await AsyncStorage.getItem('userId');  // Make sure the key here matches exactly how it's stored
+        if (!userId) {
+          console.error('User ID is not available');
+          return;
+        }
+        const userDetails = await GetRequests.getUserDetailsById(userId);
+        if (userDetails && userDetails.accountTypeId) {
+          setAccountTypeId(userDetails.accountTypeId);
+        } else {
+          console.error('Failed to retrieve account type ID');
+        }
+      } catch (error) {
+        console.error('Error fetching user details:', error);
+      }
+    };
+    fetchAccountType();
+  }, []);
 
   const renderButtonsBasedOnAccountType = () => {
     switch (accountTypeId) {

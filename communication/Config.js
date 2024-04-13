@@ -13,6 +13,29 @@ export const getToken = async () => {
     return null;
   }
 };
+// Funkcja do zapisywania userId
+export const setUserId = async (userId) => {
+  try {
+    await AsyncStorage.setItem("userId", userId.toString());
+    console.log("UserId saved:", userId); // Log the saving action
+  } catch (error) {
+    console.error('Error saving userId:', error);
+  }
+};
+``
+// Funkcja do pobierania userId
+export const getUserId = async () => {
+  try {
+    const userId = await AsyncStorage.getItem("userId");
+    console.log("UserId retrieved:", userId); // Log the userId
+    return userId ? userId : null;
+  } catch (error) {
+    console.error('Error getting userId:', error);
+    return null;
+  }
+};
+
+
 
 // Funkcja do pobierania nagłówka autoryzacji
 export const getAuthorizationHeader = async () => {
@@ -27,7 +50,7 @@ export const getAuthorizationHeader = async () => {
 
 // Utwórz instancję axios dla API
 export const api = axios.create({
-  baseURL: "http://192.168.0.13:8080"
+  baseURL: "http://192.168.0.17:8080"
 });
 
 // Przechwyć i dodaj nagłówek autoryzacji do każdego żądania
@@ -48,5 +71,7 @@ api.interceptors.request.use(
 module.exports = {
   getToken,
   getAuthorizationHeader,
+  setUserId,
+  getUserId,
   api
 };

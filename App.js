@@ -30,15 +30,6 @@ function HomeScreen() {
         <TouchableOpacity onPress={() => navigation.navigate('Register')} style={styles.button}>
           <Text style={styles.buttonText}>Rejestracja</Text>
         </TouchableOpacity>
-
-        <TouchableOpacity onPress={() => navigation.navigate('WorkerReservations')} style={styles.button}>
-          <Text style={styles.buttonText}>Zarządzanie rezerwacjami</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={() => navigation.navigate('AllClasses')} style={styles.button}>
-          <Text style={styles.buttonText}>Zarządzanie zajęciami</Text>
-        </TouchableOpacity>
-
       </ImageBackground>
     </View>
   );

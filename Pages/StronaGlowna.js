@@ -1,11 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, TouchableOpacity, Text, StyleSheet, ImageBackground } from 'react-native';
 import { useNavigation } from '@react-navigation/native'; 
+import GetRequests from '../communication/network/GetRequests';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ThreeButtonsScreen = () => {
-  const [accountTypeId, setAccountTypeId] = useState(1);
+  const [accountTypeId, setAccountTypeId] = useState(null);
   const navigation = useNavigation();
   const backgroundImage = require('../assets/pexels-lukas-669577.jpg');
+
+  useEffect(() => {
+    const fetchAccountType = async () => {
+      try {
+        const userId = await AsyncStorage.getItem('userId');  // Make sure the key here matches exactly how it's stored
+        if (!userId) {
+          console.error('User ID is not available');
+          return;
+        }
+        const userDetails = await GetRequests.getUserDetailsById(userId);
+        if (userDetails && userDetails.accountTypeId) {
+          setAccountTypeId(userDetails.accountTypeId);
+        } else {
+          console.error('Failed to retrieve account type ID');
+        }
+      } catch (error) {
+        console.error('Error fetching user details:', error);
+      }
+    };
+    fetchAccountType();
+  }, []);
 
   const renderButtonsBasedOnAccountType = () => {
     switch (accountTypeId) {
@@ -13,19 +36,19 @@ const ThreeButtonsScreen = () => {
         return (
           <>
             <TouchableOpacity style={styles.saveButton} onPress={() => navigation.navigate('AllEmployee')}>
-              <Text style={styles.buttonText}>Pracownicy</Text>
+              <Text style={styles.buttonText}>Zarządzanie pracownikami</Text>
             </TouchableOpacity>
             <View style={styles.spacing} />
             <TouchableOpacity style={styles.saveButton} onPress={() => navigation.navigate('WorkerReservations')}>
-              <Text style={styles.buttonText}>Rezerwacje</Text>
+              <Text style={styles.buttonText}>Zarządzanie rezerwacjami</Text>
             </TouchableOpacity>
             <View style={styles.spacing} />
             <TouchableOpacity style={styles.saveButton} onPress={() => navigation.navigate('AllCustomer')}>
-              <Text style={styles.buttonText}>Użytkownicy</Text>
+              <Text style={styles.buttonText}>Zarządzanie użytkownikami</Text>
             </TouchableOpacity>
             <View style={styles.spacing} />
             <TouchableOpacity style={styles.saveButton} onPress={() => navigation.navigate('WorkerClasses')}>
-              <Text style={styles.buttonText}>Zajęcia</Text>
+              <Text style={styles.buttonText}>Zarządzanie zajęciami</Text>
             </TouchableOpacity>
           </>
         );
@@ -45,15 +68,15 @@ const ThreeButtonsScreen = () => {
         return (
           <>
             <TouchableOpacity style={styles.saveButton} onPress={() => navigation.navigate('WorkerReservations')}>
-              <Text style={styles.buttonText}>Rezerwacje</Text>
+              <Text style={styles.buttonText}>Zarządzanie rezerwacjami</Text>
             </TouchableOpacity>
             <View style={styles.spacing} />
             <TouchableOpacity style={styles.saveButton} onPress={() => navigation.navigate('AllCustomer')}>
-              <Text style={styles.buttonText}>Użytkownicy</Text>
+              <Text style={styles.buttonText}>Zarządzanie użytkownikami</Text>
             </TouchableOpacity>
             <View style={styles.spacing} />
             <TouchableOpacity style={styles.saveButton} onPress={() => navigation.navigate('WorkerClasses')}>
-              <Text style={styles.buttonText}>Zajęcia</Text>
+              <Text style={styles.buttonText}>Zarządzanie zajęciami</Text>
             </TouchableOpacity>
           </>
         );

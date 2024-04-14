@@ -1,37 +1,36 @@
-
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, StyleSheet, ActivityIndicator, TouchableOpacity, Alert } from 'react-native';
 import GetRequests from '../communication/network/GetRequests';
 import { DeleteRequests } from '../communication/network/DeleteRequests';
 
-const AllEmployeesScreen = ({ navigation }) => {
-    const [employees, setEmployees] = useState([]);
+const AllCustomerScreen = ({ navigation }) => {
+    const [customers, setCustomers] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetchEmployees();
+        fetchCustomers();
     }, []);
 
-    const fetchEmployees = async () => {
+    const fetchCustomers = async () => {
         setLoading(true);
         try {
-            const employeesData = await GetRequests.getAllEmployee();
-            setEmployees(employeesData || []);
+            const customersData = await GetRequests.getAllCustomers();
+            setCustomers(customersData || []);
         } catch (error) {
-            console.error('Błąd podczas pobierania pracowników:', error);
+            console.error('Błąd podczas pobierania użytkowników', error);
         } finally {
             setLoading(false);
         }
     };
 
-    const handleDeleteEmployee = async (userId) => {
+    const handleDeleteCustomer = async (userId) => {
         const confirmed = await confirmDeleteUser();
 
         if (confirmed) {
             const deleted = await DeleteRequests.deleteUser(userId);
             if (deleted) {
                 Alert.alert(`Użytkownik o ID ${userId} został pomyślnie usunięty.`);
-                await fetchEmployees(); // Odśwież listę po usunięciu pracownika
+                await fetchCustomers(); // Odśwież listę po usunięciu użytkownika
             } else {
                 Alert.alert('Nie udało się usunąć użytkownika.');
             }
@@ -59,18 +58,14 @@ const AllEmployeesScreen = ({ navigation }) => {
         });
     };
 
-    const handleAddUser = () => {
-        navigation.navigate('AddEmployee');
-    };
-
     const renderItem = ({ item }) => (
-        <View style={styles.employeeItem}>
+        <View style={styles.customerItem}>
             <View>
-                <Text style={styles.employeeName}>{item.firstName} {item.lastName}</Text>
-                <Text style={styles.employeeEmail}>{item.email}</Text>
-                <Text style={styles.employeeLogin}>{item.login}</Text>
+                <Text style={styles.customerName}>{item.firstName} {item.lastName}</Text>
+                <Text style={styles.customerEmail}>{item.email}</Text>
+                <Text style={styles.customerLogin}>{item.login}</Text>
             </View>
-            <TouchableOpacity style={styles.deleteButton} onPress={() => handleDeleteEmployee(item.id)}>
+            <TouchableOpacity style={styles.deleteButton} onPress={() => handleDeleteCustomer(item.id)}>
                 <Text style={styles.deleteButtonText}>Usuń</Text>
             </TouchableOpacity>
         </View>
@@ -82,11 +77,8 @@ const AllEmployeesScreen = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity style={styles.addButton} onPress={handleAddUser}>
-                <Text style={styles.addButtonText}>Dodaj pracownika</Text>
-            </TouchableOpacity>
             <FlatList
-                data={employees}
+                data={customers}
                 keyExtractor={(item) => item.id.toString()}
                 renderItem={renderItem}
                 ItemSeparatorComponent={() => <View style={styles.separator} />}
@@ -105,7 +97,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    employeeItem: {
+    customerItem: {
         backgroundColor: '#ffffff',
         padding: 20,
         marginVertical: 8,
@@ -122,17 +114,17 @@ const styles = StyleSheet.create({
         shadowRadius: 3.84,
         elevation: 5,
     },
-    employeeName: {
+    customerName: {
         fontSize: 18,
         fontWeight: 'bold',
         marginBottom: 5,
     },
-    employeeEmail: {
+    customerEmail: {
         fontSize: 16,
         color: 'gray',
         marginBottom: 5,
     },
-    employeeLogin: {
+    customerLogin: {
         fontSize: 14,
         color: 'darkgray',
     },
@@ -145,17 +137,6 @@ const styles = StyleSheet.create({
         color: 'white',
         fontWeight: 'bold',
     },
-    addButton: {
-        backgroundColor: 'green',
-        padding: 10,
-        borderRadius: 5,
-        marginBottom: 20,
-        alignSelf: 'flex-start',
-    },
-    addButtonText: {
-        color: 'white',
-        fontWeight: 'bold',
-    },
     separator: {
         height: 1,
         backgroundColor: '#cccccc',
@@ -163,6 +144,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default AllEmployeesScreen;
-
-
+export default AllCustomerScreen;

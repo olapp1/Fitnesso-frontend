@@ -13,6 +13,11 @@ import AllReservations from './Pages/AllReservationsPage';
 import WorkerReservations from './Pages/WorkerReservationsPage';
 import { useNavigation } from '@react-navigation/native';
 import AllEmployeesPage from "./Pages/AllEmployeesPage";
+import AddUserPage from "./Pages/AddUserPage";
+import AllCustomerPage from "./Pages/AllCustomerPage";
+import AllWorkerClassesPage from "./Pages/AllWorkerClassesPage";
+import AddFitnessClassPage from "./Pages/AddFitnessClassPage";
+import UpdateWorkerClassPage from "./Pages/UpdateWorkerClassPage";
 
 
 const Stack = createNativeStackNavigator();
@@ -51,7 +56,11 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home">
         <Stack.Screen name="AllEmployee" component={AllEmployeesPage} options={{ headerShown: false }} />
-
+        <Stack.Screen name="AddEmployee" component={AddUserPage} options={{ headerShown: false }} />
+        <Stack.Screen name="AddFitnessClass" component={AddFitnessClassPage} options={{ headerShown: false }} />
+        <Stack.Screen name="WorkerClasses" component={AllWorkerClassesPage} options={{ headerShown: false }} />
+        <Stack.Screen name="UpdateWorkerClass" component={UpdateWorkerClassPage} options={{ headerShown: false }} />
+        <Stack.Screen name="AllCustomer" component={AllCustomerPage} options={{ headerShown: false }} />
         <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={LoginPage} options={{ headerShown: false }} />
         <Stack.Screen name="Register" component={RegisterPage} options={{ headerShown: false }} />

@@ -35,8 +35,45 @@ class GetRequests {
         }
     }
 
+    static async getAllCustomers() {
+        try {
+            const token = await AsyncStorage.getItem('Token');
+            if (token) {
+                const response = await api.get(`${API_V1}/users/users`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                return Utils.mapResponse(response);
+            } else {
+                console.error('Token is not available');
+                return null;
+            }
+        } catch (error) {
+            Utils.handleError(error);
+            return null;
+        }
+    }
 
-
+    static async getAllWorkerClasses() {
+        try {
+            const token = await AsyncStorage.getItem('Token');
+            if (token) {
+                const response = await api.get(`${API_V1}/itness-classes/active-with-vacancies`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                return Utils.mapResponse(response);
+            } else {
+                console.error('Token is not available');
+                return null;
+            }
+        } catch (error) {
+            Utils.handleError(error);
+            return null;
+        }
+    }
     // Metoda pobierająca użytkownika po ID
     static async getUserById(id) {
         try {

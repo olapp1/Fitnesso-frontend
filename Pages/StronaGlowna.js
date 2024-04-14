@@ -11,8 +11,8 @@ const ThreeButtonsScreen = () => {
 
     const handleLogout = async () => {
         try {
-            await logoutUser(); // Wywołaj funkcję logoutUser do wylogowania użytkownika
-            navigation.navigate('Home'); // Przykład przekierowania na ekran główny w react-navigation
+            await logoutUser();
+            navigation.navigate('Home');
         } catch (error) {
             console.error('Błąd podczas wylogowywania:', error);
 
@@ -43,7 +43,6 @@ const ThreeButtonsScreen = () => {
                         <TouchableOpacity style={styles.saveButton} onPress={() => navigation.navigate('AllEmployee')}>
                             <Text style={styles.buttonText}>Pracownicy</Text>
                         </TouchableOpacity>
-
                         <View style={styles.spacing} />
                         <TouchableOpacity style={styles.saveButton} onPress={() => navigation.navigate('WorkerReservations')}>
                             <Text style={styles.buttonText}>Rezerwacje</Text>

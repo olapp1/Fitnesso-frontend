@@ -66,4 +66,44 @@ export class PostRequests {
       return null;
     }
   }
+  static async registerEmployee(firstName, lastName, login, email, password, phone) {
+    try {
+      const response = await apiAuth.post(Post.EMPLOYEE_ADD, {
+        firstName: firstName,
+        lastName: lastName,
+        login: login,
+        email: email,
+        password: password,
+        phone: phone
+      }, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.status === 200) {
+        const userData = response.data;
+        return userData;
+      } else {
+        throw new Error('Invalid response');
+      }
+    } catch (error) {
+      console.error('Employee Registration Error:', error);
+      throw new Error('An error occurred during employee registration.');
+    }
+  }
+  static async addFitnessClass(newFitnessClass) {
+    try {
+      const response = await axios.post(Post.FITNESS_CLASS, newFitnessClass);
+
+      if (response.status === 200 || response.status === 201) {
+        return response.data; // Zwróć dane z odpowiedzi
+      } else {
+        throw new Error('Failed to add fitness class');
+      }
+    } catch (error) {
+      console.error('Error adding fitness class:', error);
+      throw new Error('An error occurred while adding fitness class');
+    }
+  }
 }

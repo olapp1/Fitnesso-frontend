@@ -16,7 +16,8 @@ export const Post = {
     USER: API_V1 + "/auth/login",
     USERREG: API_V1 + "/auth/register",
     USER_LOGOUT: API_V1 + "/logout", 
-    RESERVATION_ADD: API_V1 + "/reservations/add" 
+    RESERVATION_ADD: API_V1 + "/reservations/add",
+    EMPLOYEE_ADD : API_V1 + "/users/addEmployee"
 };
 
 
@@ -24,6 +25,7 @@ export const Put = {
     USER_UPDATE: (userId) => `${API_V1}${USERS}/${userId}`,
     ACCEPT_RESERVATION: (reservationId) => `${API_V1}/reservations/${reservationId}/accept`,
     ACCEPT_ALL_RESERVATIONS: `${API_V1}/reservations/accept/all`,
+    UPDATE_WORKER_CLASS: (classId) =>`${API_V1}/itness-classes/${classId}/class`,
 };
 
 export const Delete = {

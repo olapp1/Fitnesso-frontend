@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginPage from './Pages/LoginPage';
 import RegisterPage from './Pages/RegisterPage';
+import AllEmployeesv from  './Pages/AllEmployeesPage';
 import UserDetailsPage from './Pages/UserDetailsPage';
 import Oferta from './Pages/Oferta';
 import StronaGlowna from './Pages/StronaGlowna';
@@ -11,6 +12,7 @@ import AllClasses from './Pages/AllClassesPage';
 import AllReservations from './Pages/AllReservationsPage';
 import WorkerReservations from './Pages/WorkerReservationsPage';
 import { useNavigation } from '@react-navigation/native';
+import AllEmployeesPage from "./Pages/AllEmployeesPage";
 
 
 const Stack = createNativeStackNavigator();
@@ -48,6 +50,8 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen name="AllEmployee" component={AllEmployeesPage} options={{ headerShown: false }} />
+
         <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={LoginPage} options={{ headerShown: false }} />
         <Stack.Screen name="Register" component={RegisterPage} options={{ headerShown: false }} />

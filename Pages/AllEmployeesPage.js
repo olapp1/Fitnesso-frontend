@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, StyleSheet, ActivityIndicator, TouchableOpacity, Alert } from 'react-native';
 import GetRequests from '../communication/network/GetRequests';
@@ -26,14 +25,13 @@ const AllEmployeesScreen = ({ navigation }) => {
 
     const handleDeleteEmployee = async (userId) => {
         const confirmed = await confirmDeleteUser();
-
         if (confirmed) {
             const deleted = await DeleteRequests.deleteUser(userId);
             if (deleted) {
                 Alert.alert(`Użytkownik o ID ${userId} został pomyślnie usunięty.`);
-                await fetchEmployees(); // Odśwież listę po usunięciu pracownika
+                await fetchEmployees(); 
             } else {
-                Alert.alert('Nie udało się usunąć użytkownika.');
+                Alert.alert('Nie udało się usunąć użytkownika ze wzgedu na prowadzone zajęcia.');
             }
         }
     };
@@ -44,15 +42,8 @@ const AllEmployeesScreen = ({ navigation }) => {
                 'Potwierdzenie',
                 'Czy na pewno chcesz usunąć tego pracownika?',
                 [
-                    {
-                        text: 'Anuluj',
-                        style: 'cancel',
-                        onPress: () => resolve(false),
-                    },
-                    {
-                        text: 'Usuń',
-                        onPress: () => resolve(true),
-                    },
+                    { text: 'Anuluj', style: 'cancel', onPress: () => resolve(false) },
+                    { text: 'Usuń', onPress: () => resolve(true) },
                 ],
                 { cancelable: false }
             );
@@ -61,6 +52,15 @@ const AllEmployeesScreen = ({ navigation }) => {
 
     const handleAddUser = () => {
         navigation.navigate('AddEmployee');
+    };
+
+    const handleSortEmployees = () => {
+        const sortedEmployees = [...employees].sort((a, b) => a.lastName.localeCompare(b.lastName));
+        setEmployees(sortedEmployees);
+    };
+
+    const handleRefresh = () => {
+        fetchEmployees();
     };
 
     const renderItem = ({ item }) => (
@@ -82,8 +82,15 @@ const AllEmployeesScreen = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
+            <View style={{ marginTop: 40 }}></View>
             <TouchableOpacity style={styles.addButton} onPress={handleAddUser}>
                 <Text style={styles.addButtonText}>Dodaj pracownika</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.sortButton} onPress={handleSortEmployees}>
+                <Text style={styles.sortButtonText}>Sortuj alfabetycznie</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.refreshButton} onPress={handleRefresh}>
+                <Text style={styles.refreshButtonText}>Odśwież</Text>
             </TouchableOpacity>
             <FlatList
                 data={employees}
@@ -156,6 +163,28 @@ const styles = StyleSheet.create({
         color: 'white',
         fontWeight: 'bold',
     },
+    sortButton: {
+        backgroundColor: 'blue',
+        padding: 10,
+        borderRadius: 5,
+        marginBottom: 20,
+        alignSelf: 'flex-start',
+    },
+    sortButtonText: {
+        color: 'white',
+        fontWeight: 'bold',
+    },
+    refreshButton: {
+        backgroundColor: 'lightblue',
+        padding: 10,
+        borderRadius: 5,
+        marginBottom: 20,
+        alignSelf: 'flex-start',
+    },
+    refreshButtonText: {
+        color: 'white',
+        fontWeight: 'bold',
+    },
     separator: {
         height: 1,
         backgroundColor: '#cccccc',
@@ -164,5 +193,3 @@ const styles = StyleSheet.create({
 });
 
 export default AllEmployeesScreen;
-
-

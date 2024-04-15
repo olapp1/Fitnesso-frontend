@@ -30,9 +30,9 @@ const AllCustomerScreen = ({ navigation }) => {
             const deleted = await DeleteRequests.deleteUser(userId);
             if (deleted) {
                 Alert.alert(`Użytkownik o ID ${userId} został pomyślnie usunięty.`);
-                await fetchCustomers(); // Odśwież listę po usunięciu użytkownika
+                await fetchCustomers(); 
             } else {
-                Alert.alert('Nie udało się usunąć użytkownika.');
+                Alert.alert('Nie udało się usunąć użytkownika ze wzgledu na zajęcia.');
             }
         }
     };
@@ -58,6 +58,11 @@ const AllCustomerScreen = ({ navigation }) => {
         });
     };
 
+    const sortCustomers = () => {
+        const sortedCustomers = [...customers].sort((a, b) => a.firstName.localeCompare(b.firstName));
+        setCustomers(sortedCustomers);
+    };
+
     const renderItem = ({ item }) => (
         <View style={styles.customerItem}>
             <View>
@@ -77,6 +82,10 @@ const AllCustomerScreen = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
+            <View style={{ marginTop: 40 }}></View>
+            <TouchableOpacity style={styles.sortButton} onPress={sortCustomers}>
+                <Text style={styles.sortButtonText}>Sortuj alfabetycznie</Text>
+            </TouchableOpacity>
             <FlatList
                 data={customers}
                 keyExtractor={(item) => item.id.toString()}
@@ -134,6 +143,17 @@ const styles = StyleSheet.create({
         borderRadius: 5,
     },
     deleteButtonText: {
+        color: 'white',
+        fontWeight: 'bold',
+    },
+    sortButton: {
+        backgroundColor: 'blue',
+        padding: 10,
+        borderRadius: 5,
+        marginBottom: 20,
+        alignSelf: 'flex-start',
+    },
+    sortButtonText: {
         color: 'white',
         fontWeight: 'bold',
     },

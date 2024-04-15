@@ -4,7 +4,6 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginPage from './Pages/LoginPage';
 import RegisterPage from './Pages/RegisterPage';
-import AllEmployeesv from  './Pages/AllEmployeesPage';
 import UserDetailsPage from './Pages/UserDetailsPage';
 import Oferta from './Pages/Oferta';
 import StronaGlowna from './Pages/StronaGlowna';
@@ -38,13 +37,7 @@ function HomeScreen() {
           <Text style={styles.buttonText}>Rejestracja</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => navigation.navigate('WorkerReservations')} style={styles.button}>
-          <Text style={styles.buttonText}>Zarządzanie rezerwacjami</Text>
-        </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => navigation.navigate('AllClasses')} style={styles.button}>
-          <Text style={styles.buttonText}>Zarządzanie zajęciami</Text>
-        </TouchableOpacity>
 
       </ImageBackground>
     </View>

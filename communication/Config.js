@@ -27,7 +27,7 @@ export const getAuthorizationHeader = async () => {
 
 // Utwórz instancję axios dla API
 export const api = axios.create({
-  baseURL: "http://192.168.18.18:8080"
+  baseURL: "http://192.168.0.17:8080"
 });
 
 // Przechwyć i dodaj nagłówek autoryzacji do każdego żądania

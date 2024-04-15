@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {logoutUser} from "../communication/network/AuthRequest";
 const ThreeButtonsScreen = () => {
-    //const [accountTypeId, setAccountTypeId] = useState(1);
+    
     const [idTypAccount, setIdTypAccount] = useState(null);
     const navigation = useNavigation();
     const backgroundImage = require('../assets/pexels-lukas-669577.jpg');
@@ -32,30 +32,34 @@ const ThreeButtonsScreen = () => {
             }
         };
 
-        getIdTypAccount(); // Wywołaj funkcję wczytującą idTypAccount przy pierwszym renderowaniu
+        getIdTypAccount(); 
     }, []);
 
     const renderButtonsBasedOnAccountType = () => {
+        
         switch (idTypAccount) {
             case 2:
                 return (
                     <>
+                    <TouchableOpacity style={styles.saveButton} onPress={() => navigation.navigate('UserDetails')}>
+                            <Text style={styles.buttonText}>Moje dane</Text>
+                        </TouchableOpacity>
                         <TouchableOpacity style={styles.saveButton} onPress={() => navigation.navigate('AllEmployee')}>
                             <Text style={styles.buttonText}>Pracownicy</Text>
                         </TouchableOpacity>
-                        <View style={styles.spacing} />
+                        
                         <TouchableOpacity style={styles.saveButton} onPress={() => navigation.navigate('WorkerReservations')}>
                             <Text style={styles.buttonText}>Rezerwacje</Text>
                         </TouchableOpacity>
-                        <View style={styles.spacing} />
+                        
                         <TouchableOpacity style={styles.saveButton} onPress={() => navigation.navigate('AllCustomer')}>
                             <Text style={styles.buttonText}>Użytkownicy</Text>
                         </TouchableOpacity>
-                        <View style={styles.spacing} />
-                        <TouchableOpacity style={styles.saveButton} onPress={() => navigation.navigate('WorkerClasses')}>
+                        
+                        <TouchableOpacity style={styles.saveButton} onPress={() => navigation.navigate('AllClasses')}>
                             <Text style={styles.buttonText}>Zajęcia</Text>
                         </TouchableOpacity>
-                        <View style={styles.spacing} />
+                        
                         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
                             <Text style={styles.buttonText}>Wyloguj się</Text>
                         </TouchableOpacity>
@@ -64,14 +68,17 @@ const ThreeButtonsScreen = () => {
             case 1:
                 return (
                     <>
+                    <TouchableOpacity style={styles.saveButton} onPress={() => navigation.navigate('UserDetails')}>
+                            <Text style={styles.buttonText}>Moje dane</Text>
+                        </TouchableOpacity>
                         <TouchableOpacity style={styles.saveButton} onPress={() => navigation.navigate('AllReservations')}>
                             <Text style={styles.buttonText}>Rezerwacje</Text>
                         </TouchableOpacity>
-                        <View style={styles.spacing} />
+                        
                         <TouchableOpacity style={styles.saveButton} onPress={() => navigation.navigate('AllClasses')}>
                             <Text style={styles.buttonText}>Zajęcia</Text>
                         </TouchableOpacity>
-                        <View style={styles.spacing} />
+                        
                         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
                             <Text style={styles.buttonText}>Wyloguj się</Text>
                         </TouchableOpacity>
@@ -80,18 +87,21 @@ const ThreeButtonsScreen = () => {
             case 3:
                 return (
                     <>
+                    <TouchableOpacity style={styles.saveButton} onPress={() => navigation.navigate('UserDetails')}>
+                            <Text style={styles.buttonText}>Moje dane</Text>
+                        </TouchableOpacity>
                         <TouchableOpacity style={styles.saveButton} onPress={() => navigation.navigate('WorkerReservations')}>
                             <Text style={styles.buttonText}>Rezerwacje</Text>
                         </TouchableOpacity>
-                        <View style={styles.spacing} />
+                        
                         <TouchableOpacity style={styles.saveButton} onPress={() => navigation.navigate('AllCustomer')}>
                             <Text style={styles.buttonText}>Użytkownicy</Text>
                         </TouchableOpacity>
-                        <View style={styles.spacing} />
-                        <TouchableOpacity style={styles.saveButton} onPress={() => navigation.navigate('WorkerClasses')}>
+                        
+                        <TouchableOpacity style={styles.saveButton} onPress={() => navigation.navigate('AllClasses')}>
                             <Text style={styles.buttonText}>Zajęcia</Text>
                         </TouchableOpacity>
-                        <View style={styles.spacing} />
+                        
                         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
                             <Text style={styles.buttonText}>Wyloguj się</Text>
                         </TouchableOpacity>
@@ -125,7 +135,7 @@ const styles = StyleSheet.create({
         marginTop: 20,
     },
     logoutButton: {
-        backgroundColor: 'red', // Kolor czerwony dla przycisku wylogowania
+        backgroundColor: 'red', 
         padding: 10,
         borderRadius: 5,
         width: '100%',

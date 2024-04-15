@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, StyleSheet, ActivityIndicator, TouchableOpacity, Alert } from 'react-native';
-import { useNavigation } from '@react-navigation/native'; // Importujemy hook do nawigacji
+import { useNavigation } from '@react-navigation/native'; 
 import GetRequests from '../communication/network/GetRequests';
 import DeleteRequests from '../communication/network/DeleteRequests';
 
 const WorkerClassesScreen = () => {
     const [workerClasses, setWorkerClasses] = useState([]);
     const [loading, setLoading] = useState(true);
-    const navigation = useNavigation(); // Używamy hooka do nawigacji
+    const navigation = useNavigation(); 
 
     useEffect(() => {
         fetchWorkerClasses();
@@ -35,21 +35,22 @@ const WorkerClassesScreen = () => {
 
     const handleDeleteClass = async (classId) => {
         const confirmed = await confirmDeleteClass();
-
+    
         if (confirmed) {
             try {
-                const deleted = await DeleteRequests.deleteWorkerClass(classId);
+                const deleted = await DeleteRequests.deleteClass(classId);
                 if (deleted) {
-                    Alert.alert(`Zajęcia o ID ${classId} zostały pomyślnie usunięte.`);
-                    await fetchWorkerClasses();
+                    Alert.alert(`Class with ID ${classId} successfully deleted.`);
+                    fetchWorkerClasses();  // Refresh the list after deletion
                 } else {
-                    Alert.alert('Nie udało się usunąć zajęć.');
+                    Alert.alert('Failed to delete class.');
                 }
             } catch (error) {
-                console.error('Błąd podczas usuwania zajęcia', error);
+                console.error('Error during class deletion', error);
             }
         }
     };
+    
 
     const confirmDeleteClass = async () => {
         return new Promise((resolve) => {

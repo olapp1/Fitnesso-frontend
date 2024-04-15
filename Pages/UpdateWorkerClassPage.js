@@ -1,123 +1,192 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert } from 'react-native';
-import { PutRequests } from '../communication/network/PutRequests'; // Importujemy funkcje do aktualizacji danych
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { View, Text, TextInput, StyleSheet, ActivityIndicator, TouchableOpacity, Button, Alert } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import GetRequests from '../communication/network/GetRequests';
+import { PutRequests } from '../communication/network/PutRequests';
 
-const UpdateWorkerClassScreen = ({ route, navigation }) => {
-    const { classId, onClassUpdated } = route.params; // Odczytujemy parametry przekazane przez nawigator
-    const [className, setClassName] = useState('');
-    const [instructor, setInstructor] = useState('');
-    const [activePlace, setActivePlace] = useState('');
-    const [maxPlace, setMaxPlace] = useState('');
+const UpdateWorkerClassScreen = ({ route }) => {
+  const { classId } = route.params;
+  const navigation = useNavigation();
 
-    useEffect(() => {
-        fetchClassDetails(); // Pobieramy szczegóły zajęcia przy pierwszym renderowaniu
-    }, []);
+  const [className, setClassName] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [activePlace, setActivePlace] = useState('');
+  const [maxPlace, setMaxPlace] = useState('');
+  const [instructorId, setInstructorId] = useState('');
+  const [loading, setLoading] = useState(true);
 
-    const fetchClassDetails = async () => {
-        try {
-            // Pobieramy szczegóły zajęcia o danym identyfikatorze
-            const classDetails = await GetRequests.getWorkerClassDetails(Id);
-            setClassName(classDetails.fitenssTypeClass.nameType);
+  useEffect(() => {
+    fetchClassDetails();
+  }, []);
 
-            setActivePlace(classDetails.activePlace.toString());
-            setMaxPlace(classDetails.maxPlace.toString());
-        } catch (error) {
-            console.error('Błąd podczas pobierania szczegółów zajęcia', error);
-        }
-    };
+  const fetchClassDetails = async () => {
+    try {
+      const classDetails = await GetRequests.getActiveClassesWithVacancies();
+      const classDetail = classDetails.find(classItem => classItem.id === classId);
 
-    const handleUpdateClass = async () => {
-        try {
-            const updatedClassData = {
-                className,
-                instructor,
-                activePlace: parseInt(activePlace),
-                maxPlace: parseInt(maxPlace)
-            };
+      if (classDetail) {
+        setClassName(classDetail.fitenssTypeClass.nameType);
+        setStartDate(classDetail.startDate);
+        setEndDate(classDetail.endDate);
+        setActivePlace(classDetail.activePlace.toString());
+        setMaxPlace(classDetail.maxPlace.toString());
+        setInstructorId(classDetail.user.id.toString());
+      } else {
+        console.error('Nie znaleziono szczegółów zajęć o danym ID');
+      }
+    } catch (error) {
+      console.error('Błąd podczas pobierania szczegółów zajęcia', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-            const response = await PutRequests.updateWorkerClass(classId, updatedClassData);
-            if (response) {
-                Alert.alert('Sukces', 'Zajęcia zostały zaktualizowane pomyślnie.');
-                onClassUpdated(); // Wywołujemy funkcję powrotu do listy zajęć po aktualizacji
-                navigation.goBack(); // Powrót do poprzedniego ekranu
-            } else {
-                Alert.alert('Błąd', 'Nie udało się zaktualizować zajęć.');
-            }
-        } catch (error) {
-            console.error('Błąd podczas aktualizacji zajęć', error);
-            Alert.alert('Błąd', 'Wystąpił problem podczas aktualizacji zajęć.');
-        }
-    };
-
+  const handleUpdate = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {
+        Alert.alert('Brak tokenu', 'Zaloguj się ponownie', [{ text: 'OK', onPress: () => navigation.navigate('Login') }]);
+        return;
+      }
+  
+      const updatedClassData = {
+        numberClass: parseInt(classId),
+        fitenssTypeClass: 1,
+        startDate: startDate,
+        endDate: endDate,
+        activePlace: parseInt(activePlace),
+        maxPlace: parseInt(maxPlace),
+        user: parseInt(instructorId)
+      };
+  
+      console.log('Id zmienianego zajęcia:', classId); 
+      
+      console.log('Dane do aktualizacji:', updatedClassData); 
+  
+      const result = await PutRequests.updateWorkerClass(classId, updatedClassData, token);
+      
+      if (result) {
+        Alert.alert(
+          "Aktualizacja",
+          "Dane zostały zaktualizowane pomyślnie.",
+          [{ text: "OK", onPress: () => navigation.navigate('AllClasses') }]
+        );
+      } else {
+        console.error('Nie udało się zaktualizować klasy.');
+      }
+    } catch (error) {
+      console.error('Błąd podczas aktualizacji klasy:', error);
+      Alert.alert('Błąd', 'Wystąpił błąd podczas aktualizacji klasy');
+    }
+  };
+  
+  if (loading) {
     return (
-        <View style={styles.container}>
-            <Text style={styles.label}>Nazwa zajęć:</Text>
-            <TextInput
-                style={styles.input}
-                value={className}
-                onChangeText={setClassName}
-                placeholder="Wprowadź nazwę zajęć"
-            />
-
-            <Text style={styles.label}>Instruktor:</Text>
-            <TextInput
-                style={styles.input}
-                value={instructor}
-                onChangeText={setInstructor}
-                placeholder="Wprowadź nazwę instruktora"
-            />
-
-            <Text style={styles.label}>Liczba zajętych miejsc:</Text>
-            <TextInput
-                style={styles.input}
-                value={activePlace}
-                onChangeText={setActivePlace}
-                placeholder="Wprowadź liczbę zajętych miejsc"
-                keyboardType="numeric"
-            />
-
-            <Text style={styles.label}>Maksymalna liczba miejsc:</Text>
-            <TextInput
-                style={styles.input}
-                value={maxPlace}
-                onChangeText={setMaxPlace}
-                placeholder="Wprowadź maksymalną liczbę miejsc"
-                keyboardType="numeric"
-            />
-
-            <TouchableOpacity style={styles.updateButton} onPress={handleUpdateClass}>
-                <Text style={styles.updateButtonText}>Aktualizuj zajęcia</Text>
-            </TouchableOpacity>
-        </View>
+      <View style={[styles.container, styles.loadingContainer]}>
+        <ActivityIndicator size="large" />
+      </View>
     );
+  }
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Edytuj zajęcia</Text>
+      <View style={styles.inputContainer}>
+        <Text>Nazwa zajęć:</Text>
+        <TextInput
+          style={styles.input}
+          value={className}
+          onChangeText={text => setClassName(text)}
+        />
+      </View>
+      <View style={styles.inputContainer}>
+        <Text>Data rozpoczęcia:</Text>
+        <TextInput
+          style={styles.input}
+          value={startDate}
+          onChangeText={text => setStartDate(text)}
+        />
+      </View>
+      <View style={styles.inputContainer}>
+        <Text>Data zakończenia:</Text>
+        <TextInput
+          style={styles.input}
+          value={endDate}
+          onChangeText={text => setEndDate(text)}
+        />
+      </View>
+      <View style={styles.inputContainer}>
+        <Text>Miejsca zajęte:</Text>
+        <TextInput
+          style={styles.input}
+          value={activePlace}
+          onChangeText={text => setActivePlace(text)}
+          keyboardType="numeric"
+        />
+      </View>
+      <View style={styles.inputContainer}>
+        <Text>Maksymalna liczba miejsc:</Text>
+        <TextInput
+          style={styles.input}
+          value={maxPlace}
+          onChangeText={text => setMaxPlace(text)}
+          keyboardType="numeric"
+        />
+      </View>
+      <View style={styles.inputContainer}>
+        <Text>Instruktor ID:</Text>
+        <TextInput
+          style={styles.input}
+          value={instructorId}
+          onChangeText={text => setInstructorId(text)}
+          keyboardType="numeric"
+        />
+      </View>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={handleUpdate}
+      >
+        <Text style={styles.buttonText}>Aktualizuj</Text>
+      </TouchableOpacity>
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 20,
-    },
-    label: {
-        fontSize: 16,
-        marginBottom: 5,
-    },
-    input: {
-        borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 5,
-        padding: 10,
-        marginBottom: 20,
-    },
-    updateButton: {
-        backgroundColor: 'blue',
-        padding: 12,
-        borderRadius: 8,
-        alignItems: 'center',
-    },
-    updateButtonText: {
-        color: 'white',
-        fontWeight: 'bold',
-    },
+  container: {
+    flex: 1,
+    padding: 20,
+  },
+  loadingContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: 1,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  inputContainer: {
+    marginBottom: 20,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    padding: 10,
+  },
+  button: {
+    backgroundColor: "#007BFF",
+    padding: 10,
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: "#FFFFFF",
+    textAlign: 'center',
+  },
 });
 
 export default UpdateWorkerClassScreen;

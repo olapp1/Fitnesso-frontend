@@ -92,12 +92,24 @@ export class PostRequests {
       throw new Error('An error occurred during employee registration.');
     }
   }
+
+  
   static async addFitnessClass(newFitnessClass) {
     try {
-      const response = await axios.post(Post.FITNESS_CLASS, newFitnessClass);
-
+      const token = await AsyncStorage.getItem('Token');
+      if (!token) {
+        console.error('Token is not available');
+        return null;
+      }
+  
+      const response = await apiAuth.post(Post.FITNESS_CLASS, newFitnessClass, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+  
       if (response.status === 200 || response.status === 201) {
-        return response.data; // Zwróć dane z odpowiedzi
+        return response.data;
       } else {
         throw new Error('Failed to add fitness class');
       }
@@ -106,4 +118,7 @@ export class PostRequests {
       throw new Error('An error occurred while adding fitness class');
     }
   }
+  
+  
+  
 }

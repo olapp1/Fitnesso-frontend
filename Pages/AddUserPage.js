@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { PostRequests } from '../communication/network/PostRequests';
 
-const AddUserScreen = ({ navigation }) =>{
+const AddUserScreen = ({ navigation }) => {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [login, setLogin] = useState('');
@@ -10,8 +10,37 @@ const AddUserScreen = ({ navigation }) =>{
     const [password, setPassword] = useState('');
     const [phone, setPhone] = useState('');
 
+    const validateEmail = email => {
+        const re = /\S+@\S+\.\S+/;
+        return re.test(email);
+    };
+
+    const validatePhone = phone => {
+        const re = /^\d{9,}$/;
+        return re.test(phone);
+    };
+
     const handleAddEmployee = async () => {
         try {
+            if (!firstName.trim() || !lastName.trim() || !login.trim() || !email.trim() || !password.trim() || !phone.trim()) {
+                Alert.alert('Błąd', 'Wszystkie pola są wymagane.');
+                return;
+            }
+
+            if (password.length < 6) {
+                Alert.alert('Błąd', 'Hasło musi mieć co najmniej 6 znaków.');
+                return;
+            }
+
+            if (!validateEmail(email)) {
+                Alert.alert('Błąd', 'Podaj poprawny adres email.');
+                return;
+            }
+
+            if (!validatePhone(phone)) {
+                Alert.alert('Błąd', 'Podaj poprawny numer telefonu.');
+                return;
+            }
 
             const userData = await PostRequests.registerEmployee(
                 firstName,
@@ -22,10 +51,8 @@ const AddUserScreen = ({ navigation }) =>{
                 phone
             );
 
-            // Obsługa udanego dodania pracownika
             Alert.alert('Sukces', 'Dodano pracownika pomyślnie.');
 
-            // Wyczyść pola po dodaniu pracownika
             setFirstName('');
             setLastName('');
             setLogin('');
@@ -33,7 +60,6 @@ const AddUserScreen = ({ navigation }) =>{
             setPassword('');
             setPhone('');
         } catch (error) {
-            // Obsługa błędu dodawania pracownika
             Alert.alert('Błąd', 'Nie udało się dodać pracownika. Spróbuj ponownie.');
         }
     };
@@ -119,4 +145,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default  AddUserScreen;
+export default AddUserScreen;

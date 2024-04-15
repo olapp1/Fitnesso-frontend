@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, StyleSheet, ActivityIndicator, TouchableOpacity, Alert, Button } from 'react-native';
 import GetRequests from '../communication/network/GetRequests';
+import { DeleteRequests } from '../communication/network/DeleteRequests';
 
 const AllReservationsScreen = () => {
   const [reservations, setReservations] = useState({
@@ -85,6 +86,7 @@ const AllReservationsScreen = () => {
 
   return (
     <View style={styles.container}>
+      <View style={{ marginTop: 40 }}></View>
       <View style={styles.buttonContainer}>
         <Button title="Zaakceptowane" onPress={() => setCurrentView('accepted')} />
         <Button title="Niezaakceptowane" onPress={() => setCurrentView('notAccepted')} />

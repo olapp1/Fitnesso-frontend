@@ -6,10 +6,6 @@ export const Get = {
     USER_BY_ID: (userId) => `${API_V1}${USERS}/${userId}`,
     ONLY_USERS: API_V1 + USERS + "/users",
     USER_BY_EMAIL: (email) => `${API_V1}${USERS}/by-email?email=${email}`,
-
-
-
-
 };
 
 export const Post = {
@@ -17,7 +13,8 @@ export const Post = {
     USERREG: API_V1 + "/auth/register",
     USER_LOGOUT: API_V1 + "/logout", 
     RESERVATION_ADD: API_V1 + "/reservations/add",
-    EMPLOYEE_ADD : API_V1 + "/users/addEmployee"
+    EMPLOYEE_ADD : API_V1 + "/users/addEmployee",
+    FITNESS_CLASS:  API_V1 +"/itness-classes/addNewClass"
 };
 
 

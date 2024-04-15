@@ -77,7 +77,7 @@ class GetRequests {
     // Metoda pobierająca użytkownika po ID
     static async getUserById(id) {
         try {
-            const response = await api.get(`${Get.USER_BY_ID}/${id}`); // Poprawiony adres URL
+            const response = await api.get(`${Get.USER_BY_ID}/${id}`); 
             return Utils.mapResponse(response);
         } catch (error) {
             Utils.handleError(error);
@@ -85,7 +85,7 @@ class GetRequests {
     }
 
 
-    // Metoda pobierająca szczegóły użytkownika po ID
+   
 
     static async getUserDetailsById(userId) {
         try {

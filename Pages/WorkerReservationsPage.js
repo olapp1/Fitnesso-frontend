@@ -102,6 +102,7 @@ const AllReservationsScreen = () => {
 
   return (
     <View style={styles.container}>
+      <View style={{ marginTop: 40 }}></View>
       <View style={styles.buttonContainer}>
         <Button title="Wszystkie" onPress={() => setFilter('all')} />
         <View style={styles.buttonSpacing}></View>

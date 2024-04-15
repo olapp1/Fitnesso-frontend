@@ -36,9 +36,12 @@ const LoginPage = () => {
         const userIdResponse = await GetRequests.getUserIdByEmail(email);
         if (userIdResponse) {
           console.log('User ID:', userIdResponse[0]);
+          console.log('ID typ account: ', userIdResponse[1])
+
     
           await AsyncStorage.setItem('userToken', result.token);
           await AsyncStorage.setItem('userId', userIdResponse[0].toString());
+          await AsyncStorage.setItem('idTypAccount', userIdResponse[1].toString())
     
           navigation.navigate('UserDetails', { userId: userIdResponse[0].toString() });
         } else {

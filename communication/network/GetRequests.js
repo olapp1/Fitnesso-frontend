@@ -1,4 +1,4 @@
-import { Get } from '../Endpoints';
+import {Get } from '../Endpoints';
 import { api } from '../Config';
 import { Utils } from './Utils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -14,11 +14,70 @@ class GetRequests {
             Utils.handleError(error);
         }
     }
+    //medoda pobiera wszytstkich pracowników
+    static async getAllEmployee() {
+        try {
+            const token = await AsyncStorage.getItem('Token');
+            if (token) {
+                const response = await api.get(`${API_V1}/users/employee`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                return Utils.mapResponse(response);
+            } else {
+                console.error('Token is not available');
+                return null;
+            }
+        } catch (error) {
+            Utils.handleError(error);
+            return null;
+        }
+    }
 
+    static async getAllCustomers() {
+        try {
+            const token = await AsyncStorage.getItem('Token');
+            if (token) {
+                const response = await api.get(`${API_V1}/users/users`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                return Utils.mapResponse(response);
+            } else {
+                console.error('Token is not available');
+                return null;
+            }
+        } catch (error) {
+            Utils.handleError(error);
+            return null;
+        }
+    }
+
+    static async getAllWorkerClasses() {
+        try {
+            const token = await AsyncStorage.getItem('Token');
+            if (token) {
+                const response = await api.get(`${API_V1}/itness-classes/active-with-vacancies`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                return Utils.mapResponse(response);
+            } else {
+                console.error('Token is not available');
+                return null;
+            }
+        } catch (error) {
+            Utils.handleError(error);
+            return null;
+        }
+    }
     // Metoda pobierająca użytkownika po ID
     static async getUserById(id) {
         try {
-            const response = await api.get(`${Get.USER_BY_ID}/${id}`); // Poprawiony adres URL
+            const response = await api.get(`${Get.USER_BY_ID}/${id}`); 
             return Utils.mapResponse(response);
         } catch (error) {
             Utils.handleError(error);
@@ -26,7 +85,7 @@ class GetRequests {
     }
 
 
-    // Metoda pobierająca szczegóły użytkownika po ID
+   
 
     static async getUserDetailsById(userId) {
         try {
